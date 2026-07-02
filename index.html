@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MAB Contextual · Alertas Pix Anti-Fraude — Central de Materiais</title>
+<link rel="stylesheet" href="assets/style.css">
+<style>
+  body{background:
+    radial-gradient(120% 90% at 0% 0%, #10314f 0%, transparent 45%),
+    radial-gradient(120% 90% at 100% 100%, #123 0%, transparent 50%),
+    #0c1522;color:#e9eef6}
+  .hero{max-width:1180px;margin:0 auto;padding:clamp(3rem,8vw,6rem) clamp(1.2rem,4vw,2.5rem) 2rem}
+  .eyebrow{font-family:var(--mono);font-size:.72rem;letter-spacing:.26em;text-transform:uppercase;color:#52d4dc;display:flex;gap:.6rem;align-items:center}
+  .eyebrow::before{content:"";width:26px;height:1px;background:#52d4dc}
+  .hero h1{font-family:var(--serif);color:#fff;font-size:clamp(2.2rem,6vw,4rem);line-height:1.04;margin:1.1rem 0 0;max-width:20ch;letter-spacing:-.015em}
+  .hero h1 em{font-style:italic;color:#7fe0e6}
+  .hero p{color:#9fb0c9;font-size:clamp(1rem,1.7vw,1.25rem);max-width:64ch;margin:1.4rem 0 0;line-height:1.55}
+  .offline-badge{display:inline-flex;gap:.5rem;align-items:center;margin-top:1.8rem;font-family:var(--mono);font-size:.72rem;color:#9be36a;border:1px solid rgba(155,227,106,.3);background:rgba(155,227,106,.08);padding:.4rem .8rem;border-radius:999px}
+  .sec{max-width:1180px;margin:0 auto;padding:1rem clamp(1.2rem,4vw,2.5rem) 2rem}
+  .sec h2{font-family:var(--serif);color:#cdd7e6;font-size:1.1rem;font-weight:500;margin:2rem 0 1rem;border:none;padding:0;display:flex;align-items:center;gap:.7rem}
+  .sec h2::after{content:"";flex:1;height:1px;background:rgba(159,176,201,.18)}
+  .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1.1rem}
+  .rc{display:block;text-decoration:none;background:linear-gradient(180deg,#111a29,#0d1522);border:1px solid rgba(159,176,201,.16);
+    border-radius:16px;padding:1.4rem 1.4rem 1.5rem;transition:.2s;position:relative;overflow:hidden}
+  .rc:hover{border-color:rgba(82,212,220,.45);transform:translateY(-2px)}
+  .rc .ic{width:40px;height:40px;border-radius:10px;display:grid;place-items:center;font-size:1.2rem;margin-bottom:.9rem}
+  .rc h3{color:#fff;font-family:var(--sans);font-size:1.12rem;font-weight:650;margin:0 0 .4rem}
+  .rc p{color:#9fb0c9;font-size:.9rem;margin:0;line-height:1.5}
+  .rc .meta{margin-top:1rem;font-family:var(--mono);font-size:.68rem;letter-spacing:.08em;color:#6b7a92;display:flex;gap:.6rem;flex-wrap:wrap}
+  .rc .go{position:absolute;top:1.4rem;right:1.4rem;color:#52d4dc;font-size:1.1rem;opacity:.6}
+  .b-cyan{background:rgba(82,212,220,.14);color:#7fe0e6}
+  .b-violet{background:rgba(179,156,245,.16);color:#c3b2f7}
+  .b-amber{background:rgba(240,180,80,.16);color:#f0c072}
+  .b-lime{background:rgba(155,227,106,.16);color:#b6ec8e}
+  .tag{font-family:var(--mono);font-size:.62rem;padding:.2rem .5rem;border-radius:5px;background:rgba(159,176,201,.12);color:#9fb0c9}
+  .tag.on{background:rgba(155,227,106,.16);color:#b6ec8e}
+  .tag.net{background:rgba(240,180,80,.16);color:#f0c072}
+  .foothub{max-width:1180px;margin:0 auto;padding:2rem clamp(1.2rem,4vw,2.5rem) 4rem;color:#6b7a92;font-size:.82rem;border-top:1px solid rgba(159,176,201,.14);line-height:1.6}
+  a.inl{color:#7fe0e6}
+</style>
+</head>
+<body>
+  <header class="hero">
+    <div class="eyebrow">Proteção Anti-Fraude · Pix · Central de Materiais</div>
+    <h1>Alertas que <em>aprendem</em> com cada cliente.</h1>
+    <p>Documentação técnica, roteiros de apresentação e decks visuais do sistema de alertas Pix adaptativo — um Multi-Armed Bandit contextual que escolhe, por perfil de cliente, a combinação de módulos mais eficaz para reduzir golpe sem gerar atrito.</p>
+    <div class="offline-badge">● Pacote 100% offline — sem dependências externas</div>
+  </header>
+
+  <section class="sec">
+    <h2>Referência &amp; roteiros</h2>
+    <div class="cards">
+      <a class="rc" href="apostila.html">
+        <span class="go">→</span>
+        <div class="ic b-cyan">📘</div>
+        <h3>Apostila técnica completa</h3>
+        <p>Edição estendida: teoria de bandits, MAB contextual, MABWiser, recompensa contínua, produção e avaliação — com exemplos numéricos resolvidos, diagramas e exercícios com gabarito. Serve como material de estudo completo.</p>
+        <div class="meta"><span class="tag on">Offline</span><span class="tag">32 seções</span><span class="tag">Exemplos &amp; exercícios</span></div>
+      </a>
+      <a class="rc" href="roteiro-executivo.html">
+        <span class="go">→</span>
+        <div class="ic b-amber">🎯</div>
+        <h3>Roteiro — Apresentação executiva</h3>
+        <p>Slide a slide para montar o PowerPoint executivo: agora com cenários de clientes reais, simulação comparativa, cadeia de impacto financeiro e matriz de risco/governança. Linguagem de negócio, zero jargão.</p>
+        <div class="meta"><span class="tag on">Offline</span><span class="tag">Para PPT</span><span class="tag">21 slides</span></div>
+      </a>
+      <a class="rc" href="roteiro-tecnico.html">
+        <span class="go">→</span>
+        <div class="ic b-violet">🔬</div>
+        <h3>Roteiro — Apresentação técnica</h3>
+        <p>Slide a slide para o deck de cientistas de dados: narrativa única conectando formalismo, regret e A/B a partir de propensão e causal inference, com menos fórmulas soltas. Base para o PPT técnico.</p>
+        <div class="meta"><span class="tag on">Offline</span><span class="tag">Para PPT</span><span class="tag">14 slides</span></div>
+      </a>
+    </div>
+  </section>
+
+  <section class="sec">
+    <h2>Decks visuais (apresentar direto)</h2>
+    <div class="cards">
+      <a class="rc" href="deck-executivo.html">
+        <span class="go">→</span>
+        <div class="ic b-amber">🖥️</div>
+        <h3>Deck executivo — navegável</h3>
+        <p>Apresentação visual pronta para projetar: dois cenários de cliente (proteção e experiência), simulação lado a lado, cadeia de impacto financeiro, matriz de risco e perguntas do conselho já respondidas. Navegação por setas.</p>
+        <div class="meta"><span class="tag on">Offline</span><span class="tag">21 slides</span><span class="tag">Cenários &amp; simulação</span></div>
+      </a>
+      <a class="rc" href="deck-tecnico.html">
+        <span class="go">→</span>
+        <div class="ic b-violet">🖥️</div>
+        <h3>Deck técnico — navegável</h3>
+        <p>Apresentação visual com equações renderizadas, revisada para reduzir fórmulas soltas e conectar tudo numa narrativa única. Requer internet para as fórmulas (MathJax).</p>
+        <div class="meta"><span class="tag net">Requer internet p/ fórmulas</span><span class="tag">14 slides</span></div>
+      </a>
+    </div>
+  </section>
+
+  <footer class="foothub">
+    <strong style="color:#cdd7e6">Como usar este pacote.</strong> Abra <code style="background:rgba(179,156,245,.16)">index.html</code> em qualquer navegador — tudo funciona sem internet (exceto as fórmulas do deck técnico visual). Para montar o PowerPoint, use os dois <em>roteiros</em>: cada slide traz título, bullets, notas de orador e sugestão de visual. A <em>apostila</em> é a fonte de profundidade para responder perguntas.<br><br>
+    Material interno · versão 1.0 · gerado para uso do time de Ciência de Dados.
+  </footer>
+</body>
+</html>

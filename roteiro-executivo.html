@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Roteiro — Apresentação Executiva · MAB Pix</title>
+<link rel="stylesheet" href="assets/style.css">
+<style>
+  .sl{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:1.3rem 1.4rem;margin:1.2rem 0;border-left:3px solid var(--amber)}
+  .sl-h{display:flex;align-items:baseline;gap:.9rem;flex-wrap:wrap}
+  .sl-n{font-family:var(--mono);font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--amber);background:var(--amber-bg);padding:.25rem .6rem;border-radius:6px;font-weight:600}
+  .sl-h h3{margin:0;font-size:1.2rem}
+  .sl-msg{margin:.7rem 0 1rem;font-size:1.02rem;color:var(--navy);font-weight:600;line-height:1.4}
+  .sl-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.4rem}
+  .sl h5{font-family:var(--mono);font-size:.66rem;letter-spacing:.1em;text-transform:uppercase;color:var(--cyan-ink);margin:0 0 .4rem}
+  .sl ul{margin:.2rem 0;padding-left:1.1rem}
+  .sl li{margin:.28rem 0;font-size:.93rem}
+  .sl-notes{font-size:.92rem;color:var(--ink-2);line-height:1.55}
+  .sl-visual{margin-top:1rem;padding-top:.8rem;border-top:1px dashed var(--line-2);font-size:.88rem;color:var(--mut)}
+  .sl-visual strong{color:var(--ink)}
+  .newtag{font-family:var(--mono);font-size:.6rem;letter-spacing:.08em;text-transform:uppercase;background:var(--mint-bg);color:var(--lime);padding:.15rem .5rem;border-radius:5px;margin-left:.5rem}
+  @media(max-width:720px){.sl-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="doc">
+  <aside class="toc">
+    <a class="home" href="index.html">← Central de materiais</a>
+    <div class="brand">Roteiro Executivo<small>Para montar o PowerPoint · v2</small></div>
+    <nav>
+      <a href="#uso">Como usar</a>
+      <a href="#s1">1. Capa</a>
+      <a href="#s2">2. O problema</a>
+      <a href="#s3">3. A oportunidade</a>
+      <a href="#s4">4. O conceito</a>
+      <a href="#s5">5. Como aprende</a>
+      <a href="#s6">6. O ciclo</a>
+      <a href="#s7">7. Arquitetura</a>
+      <a href="#s8">8. Composição</a>
+      <a href="#s9">9. Cenário — Dona Marli</a>
+      <a href="#s10">10. Cenário — Lucas</a>
+      <a href="#s11">11. Simulação comparativa</a>
+      <a href="#s12">12. Recompensa</a>
+      <a href="#s13">13. Exploração</a>
+      <a href="#s14">14. A/B → Sistema</a>
+      <a href="#s15">15. Decisão técnica</a>
+      <a href="#s16">16. Cadeia de impacto</a>
+      <a href="#s17">17. Impacto em números</a>
+      <a href="#s18">18. Risco &amp; governança</a>
+      <a href="#s19">19. Perguntas do conselho</a>
+      <a href="#s20">20. Roadmap</a>
+      <a href="#s21">21. Fecho</a>
+    </nav>
+  </aside>
+
+  <main>
+    <div class="tag-part" style="margin-top:0">Roteiro de apresentação · Fórum de diretores</div>
+    <h1>Roteiro — Apresentação Executiva</h1>
+    <p class="subtitle">Versão revisada e estendida (21 slides, antes 13): agora com dois cenários de cliente reais, uma simulação lado a lado, a cadeia de impacto financeiro, uma matriz de risco/governança e as perguntas mais prováveis do conselho já respondidas. Slide a slide, com mensagem-chave, bullets prontos para colar, notas de orador e sugestão de visual.</p>
+
+    <div class="callout">
+      <div class="h">Como usar este roteiro</div>
+      <p>Cada bloco abaixo = um slide. Cole os <strong>bullets</strong> no slide, use a <strong>mensagem-chave</strong> como título ou fala de abertura, e leia as <strong>notas do orador</strong> para conduzir. Tom: negócio, sem jargão técnico, o mais didático possível — priorize os cenários (slides 9–10) e a simulação (slide 11), são os que mais geram entendimento num público de conselho. Duração-alvo: 20–25 min + perguntas (o slide 19 já antecipa as mais prováveis). Números marcados como ilustrativos — troque pelos reais do projeto assim que validados com Risco.</p>
+    </div>
+
+    <article class="sl" id="s1">
+      <div class="sl-h"><span class="sl-n">Slide 01</span><h3>Capa</h3></div>
+      <div class="sl-msg">"Alertas que aprendem com cada cliente."</div>
+      <div class="sl-grid">
+        <div><h5>No slide</h5><ul>
+          <li>Título: Alertas Pix adaptativos</li>
+          <li>Subtítulo: Reduzir golpe sem gerar atrito, aprendendo por perfil de cliente</li>
+          <li>Área / data / responsável</li>
+        </ul></div>
+        <div><h5>Notas do orador</h5><p class="sl-notes">Abrir com a promessa: a tela de alerta deixa de ser fixa e passa a se adaptar. Prometer que a apresentação vai mostrar isso com dois clientes reais, uma simulação numérica e o plano de governança — não só conceito.</p></div>
+      </div>
+      <div class="sl-visual"><strong>Visual:</strong> imagem de escudo/proteção + a marca do banco. Fundo sóbrio.</div>
+    </article>
+
+    <article class="sl" id="s2">
+      <div class="sl-h"><span class="sl-n">Slide 02</span><h3>O problema de hoje</h3></div>
+      <div class="sl-msg">Um alerta igual para todos perde força com o tempo.</div>
+      <div class="sl-grid">
+        <div><h5>No slide</h5><ul>
+          <li><strong>Previsível:</strong> golpistas treinam vítimas a ignorar</li>
+          <li><strong>Estático:</strong> não distingue perfis de risco</li>
+          <li><strong>Sem aprendizado:</strong> só suposição e A/B pontuais</li>
+        </ul></div>
+        <div><h5>Notas do orador</h5><p class="sl-notes">Enfatizar a fadiga: quando todos veem a mesma tela, o aviso vira ruído. Fechar com um gancho: "vou mostrar isso com dois clientes reais daqui a pouco".</p></div>
+      </div>
+      <div class="sl-visual"><strong>Visual:</strong> três cards com ícones (previsível / estático / sem aprendizado) em tom de alerta.</div>
+    </article>
+
+    <article class="sl" id="s3">
+      <div class="sl-h"><span class="sl-n">Slide 03</span><h3>A oportunidade</h3></div>
+      <div class="sl-msg">A tela já é modular — falta decidir a combinação certa.</div>
+      <div class="sl-grid">
+        <div><h5>No slide</h5><ul>
+          <li>Header (4 variantes) · Body (4) · Botões (2)</li>
+          <li>= 32 combinações possíveis</li>
+          <li>Testar tudo, por perfil, manualmente: inviável</li>
+        </ul></div>
+        <div><h5>Notas do orador</h5><p class="sl-notes">Mostrar que a matéria-prima já existe (módulos). O desafio é de <em>escolha</em>: qual combinação para qual cliente.</p></div>
+      </div>
+      <div class="sl-visual"><strong>Visual:</strong> pilha de módulos com variantes em "pílulas", uma destacada em cada linha.</div>
+    </article>
+
+    <article class="sl" id="s4">
+      <div class="sl-h"><span class="sl-n">Slide 04</span><h3>O conceito, sem jargão</h3></div>
+      <div class="sl-msg">Aprender qual mensagem funciona — e para quem.</div>
+      <div class="sl-grid">
+        <div><h5>No slide</h5><ul>
+          <li>Metáfora do caça-níquel: várias alavancas, ganho desconhecido</li>
+          <li>Equilíbrio entre <strong>aprender</strong> (testar) e <strong>aproveitar</strong> (usar a melhor)</li>
+          <li>"Por perfil": a melhor opção muda conforme o cliente</li>
+        </ul></div>
+        <div><h5>Notas do orador</h5><p class="sl-notes">Explicar pela metáfora, sem citar nome técnico do algoritmo. O pulo do gato é personalizar por perfil: faixa etária, volume mensal, recorrência, score de risco.</p></div>
+      </div>
+      <div class="sl-visual"><strong>Visual:</strong> ilustração de alavancas + dois cards (Aprender / Aproveitar).</div>
+    </article>
+
+    <article class="sl" id="s5">
+      <div class="sl-h"><span class="sl-n">Slide 05</span><h3>Como ele aprende</h3></div>
+      <div class="sl-msg">Da incerteza à confiança, cliente após cliente.</div>
+      <div class="sl-grid">
+        <div><h5>No slide</h5><ul>
+          <li>Início: todas as variantes parecem parecidas → o sistema explora</li>
+          <li>Depois: a melhor se destaca → o sistema aproveita</li>
+          <li>A confiança aumenta com os resultados observados</li>
+        </ul></div>
+        <div><h5>Notas do orador</h5><p class="sl-notes">Usar a imagem das curvas (largas e sobrepostas → estreitas e separadas). É a forma mais intuitiva de mostrar "aprendizado" sem entrar em matemática.</p></div>
+      </div>
+      <div class="sl-visual"><strong>Visual:</strong> duas curvas de sino — "início" (sobrepostas) vs "depois" (separadas, uma vencedora).</div>
+    </article>
+
+    <article class="sl" id="s6">
+      <div class="sl-h"><span class="sl-n">Slide 06</span><h3>O ciclo</h3></div>
+      <div class="sl-msg">Do clique do cliente ao aprendizado, em cinco passos.</div>
+      <div class="sl-grid">
+        <div><h5>No slide</h5><ul>
+          <li>1. Contexto mensal do cliente</li>
+          <li>2. Decisão (variante por módulo)</li>
+          <li>3. Alerta exibido → 4. Reação do cliente</li>
+          <li>5. Recompensa treina o modelo</li>
+        </ul></div>
+        <div><h5>Notas do orador</h5><p class="sl-notes">Frisar que cada cliente torna o sistema um pouco melhor para o próximo. O aprendizado é contínuo, não um projeto que "termina".</p></div>
+      </div>
+      <div class="sl-visual"><strong>Visual:</strong> fluxo horizontal de 5 caixas com seta de realimentação ("↻").</div>
+    </article>
+
+    <article class="sl" id="s7">
+      <div class="sl-h"><span class="sl-n">Slide 07</span><h3>Arquitetura</h3></div>
+      <div class="sl-msg">Um "aprendiz" por módulo — não um para tudo.</div>
+      <div class="sl-grid">
+        <div><h5>No slide</h5><ul>
+          <li>Um único sistema p/ combinações: 32 opções (lento)</li>
+          <li>Um por módulo: 10 opções (~3× mais rápido)</li>
+          <li>Cada módulo aprende em paralelo</li>
+        </ul></div>
+        <div><h5>Notas do orador</h5><p class="sl-notes">Justificar a decisão de engenharia sem tecnicismo: menos opções para aprender = resultado mais rápido, e mais fácil de auditar.</p></div>
+      </div>
+      <div class="sl-visual"><strong>Visual:</strong> comparação 32 (vermelho) vs 10 (verde) + três caixas de módulo.</div>
+    </article>
+
+    <article class="sl" id="s8">
+      <div class="sl-h"><span class="sl-n">Slide 08</span><h3>Composição (diagrama-âncora)</h3></div>
+      <div class="sl-msg">Um contexto, três decisões, uma tela.</div>
+      <div class="sl-grid">
+        <div><h5>No slide</h5><ul>
+          <li>Contexto mensal alimenta os três módulos</li>
+          <li>Cada módulo escolhe sua variante em paralelo</li>
+          <li>As escolhas se juntam na tela final (cada cor = um módulo)</li>
+        </ul></div>
+        <div><h5>Notas do orador</h5><p class="sl-notes">Este é o slide que "amarra" a arquitetura. Se só puder deixar um diagrama técnico, é este. Percorrer da esquerda (contexto) à direita (tela composta).</p></div>
+      </div>
+      <div class="sl-visual"><strong>Visual:</strong> diagrama contexto → 3 módulos → mockup de celular, codificado por cor.</div>
+    </article>
+
+    <article class="sl" id="s9">
+      <div class="sl-h"><span class="sl-n">Slide 09</span><h3>Cenário — Dona Marli<span class="newtag">novo</span></h3></div>
+      <div class="sl-msg">Uma cliente de 68 anos, um golpe em andamento, duas versões da mesma história.</div>
+      <div class="sl-grid">
+        <div><h5>No slide</h5><ul>
+          <li>Persona: Dona Marli, 68 anos, baixo histórico de Pix, recebendo ligação de "falso funcionário"</li>
+          <li>Coluna esquerda (hoje): alerta genérico ignorado → golpe consumado</li>
+          <li>Coluna direita (com o sistema): header reflexivo + exemplo + checkbox → ela liga pro filho, cancela</li>
+        </ul></div>
+        <div><h5>Notas do orador</h5><p class="sl-notes">Este é o slide emocional da apresentação — contar como uma história curta, não como uma lista de features. É aqui que o conselho entende "proteção" de forma concreta, não abstrata.</p></div>
+      </div>
+      <div class="sl-visual"><strong>Visual:</strong> avatar + duas colunas lado a lado (vermelho "hoje" vs verde "com o sistema"), como uma comparação antes/depois.</div>
+    </article>
+
+    <article class="sl" id="s10">
+      <div class="sl-h"><span class="sl-n">Slide 10</span><h3>Cenário — Lucas<span class="newtag">novo</span></h3></div>
+      <div class="sl-msg">Um cliente de 24 anos, uso diário, o outro lado da moeda: não gerar atrito à toa.</div>
+      <div class="sl-grid">
+        <div><h5>No slide</h5><ul>
+          <li>Persona: Lucas, 24 anos, Pix diário, baixo risco</li>
+          <li>Coluna esquerda (hoje): mesmo alerta pesado toda vez → fadiga → passa a ignorar tudo</li>
+          <li>Coluna direita (com o sistema): alerta mais leve para esse perfil → sem fricção, atenção preservada para quando importar</li>
+        </ul></div>
+        <div><h5>Notas do orador</h5><p class="sl-notes">Complementa o slide anterior: mostra que o sistema também protege a experiência de quem não está em risco — argumento importante para quem vai perguntar "isso não vai irritar todo mundo?".</p></div>
+      </div>
+      <div class="sl-visual"><strong>Visual:</strong> mesmo formato do slide 9, cores trocadas (aqui o "hoje" é ruim por excesso de atrito, não por falta de proteção).</div>
+    </article>
+
+    <article class="sl" id="s11">
+      <div class="sl-h"><span class="sl-n">Slide 11</span><h3>Simulação comparativa<span class="newtag">novo</span></h3></div>
+      <div class="sl-msg">A mesma base de 10 mil clientes, dois sistemas, resultados lado a lado.</div>
+      <div class="sl-grid">
+        <div><h5>No slide</h5><ul>
+          <li>Golpe consumado: 200 → 150 clientes</li>
+          <li>Falso abandono (atrito): 350 → 200 clientes</li>
+          <li>Abandono saudável: 450 → 750 clientes</li>
+        </ul></div>
+        <div><h5>Notas do orador</h5><p class="sl-notes">Deixar claro, verbalmente, que são números ilustrativos de simulação — não uma promessa. É o slide que conecta os dois cenários anteriores (Marli e Lucas) a uma escala de milhares de clientes.</p></div>
+      </div>
+      <div class="sl-visual"><strong>Visual:</strong> três barras duplas (hoje vs sistema), como no deck — cores: vermelho, âmbar, verde.</div>
+    </article>
+
+    <article class="sl" id="s12">
+      <div class="sl-h"><span class="sl-n">Slide 12</span><h3>O que o sistema otimiza</h3></div>
+      <div class="sl-msg">A recompensa traduz proteção em número.</div>
+      <div class="sl-grid">
+        <div><h5>No slide</h5><ul>
+          <li>Golpe confirmado: −1,0 · Contestação: −0,7</li>
+          <li>Abandono saudável: +0,8 · Conclusão normal: +0,1</li>
+          <li>Ajustado pelo perfil de risco do cliente</li>
+        </ul></div>
+        <div><h5>Notas do orador</h5><p class="sl-notes">Explicar que proteger um cliente de maior risco vale mais — assim o sistema não vira um "bloqueador chato" para clientes seguros, como o Lucas do slide 10.</p></div>
+      </div>
+      <div class="sl-visual"><strong>Visual:</strong> barras divergentes (negativas à esquerda, positivas à direita) por evento.</div>
+    </article>
+
+    <article class="sl" id="s13">
+      <div class="sl-h"><span class="sl-n">Slide 13</span><h3>Exploração × aproveitamento</h3></div>
+      <div class="sl-msg">Aprender custa. Não aprender custa mais.</div>
+      <div class="sl-grid">
+        <div><h5>No slide</h5><ul>
+          <li>Fração mínima de exploração mantém o aprendizado vivo</li>
+          <li>Guardrails: risco muito alto → sempre a versão mais forte</li>
+          <li>Grupo de controle mede o ganho com honestidade</li>
+        </ul></div>
+        <div><h5>Notas do orador</h5><p class="sl-notes">Antecipar a pergunta "e se errar com um cliente em risco?". Resposta: guardrails determinísticos fora do algoritmo + o sistema só atua na faixa de risco intermediária — o mesmo ponto volta reforçado no slide 18 (matriz de risco).</p></div>
+      </div>
+      <div class="sl-visual"><strong>Visual:</strong> curva de aprendizado (proteção acumulada) + card de guardrails.</div>
+    </article>
+
+    <article class="sl" id="s14">
+      <div class="sl-h"><span class="sl-n">Slide 14</span><h3>Aproveitando o A/B</h3></div>
+      <div class="sl-msg">O teste do checkbox vira combustível do sistema.</div>
+      <div class="sl-grid">
+        <div><h5>No slide</h5><ul>
+          <li>A/B mede o efeito <em>médio</em> do checkbox</li>
+          <li>O sistema usa isso como ponto de partida (warm start)</li>
+          <li>E descobre <em>para quem e quando</em> o checkbox protege</li>
+        </ul></div>
+        <div><h5>Notas do orador</h5><p class="sl-notes">Deixar claro que o A/B não é jogado fora — ele acelera o aprendizado. Reforçar com os próprios cenários: checkbox ajuda Dona Marli, mas atrapalha Lucas.</p></div>
+      </div>
+      <div class="sl-visual"><strong>Visual:</strong> três cards em sequência (A/B → transição → sistema adaptativo).</div>
+    </article>
+
+    <article class="sl" id="s15">
+      <div class="sl-h"><span class="sl-n">Slide 15</span><h3>Decisão técnica</h3></div>
+      <div class="sl-msg">Biblioteca consolidada, escolha fundamentada.</div>
+      <div class="sl-grid">
+        <div><h5>No slide</h5><ul>
+          <li>MABWiser — biblioteca aberta, madura, com publicações acadêmicas</li>
+          <li>Algoritmo escolhido aceita nota contínua (não só sim/não) e contexto</li>
+          <li>Validado em simulador offline antes de produção</li>
+        </ul></div>
+        <div><h5>Notas do orador</h5><p class="sl-notes">Manter leve — este slide existe para responder "vocês inventaram isso do zero?" com "não, é biblioteca consolidada e decisão fundamentada", sem entrar em fórmulas.</p></div>
+      </div>
+    </article>
+
+    <article class="sl" id="s16">
+      <div class="sl-h"><span class="sl-n">Slide 16</span><h3>Cadeia de impacto financeiro<span class="newtag">novo</span></h3></div>
+      <div class="sl-msg">Como a redução de golpe vira valor para o banco.</div>
+      <div class="sl-grid">
+        <div><h5>No slide</h5><ul>
+          <li>−0,5pp na taxa de golpe → ~500 clientes/dia protegidos</li>
+          <li>→ R$ evitado em reembolso/contestação (a validar com Risco)</li>
+          <li>→ ganho de experiência para clientes de baixo risco (NPS)</li>
+        </ul></div>
+        <div><h5>Notas do orador</h5><p class="sl-notes">Ser transparente: o valor em R$ depende do ticket médio de fraude e da política de reembolso, que são dados que pertencem à área de Risco. Este slide mostra a <em>lógica</em> da cadeia de valor, não uma cifra fechada — isso constrói credibilidade em vez de prometer demais.</p></div>
+      </div>
+      <div class="sl-visual"><strong>Visual:</strong> funil horizontal de 4 caixas conectadas por setas.</div>
+    </article>
+
+    <article class="sl" id="s17">
+      <div class="sl-h"><span class="sl-n">Slide 17</span><h3>Impacto esperado</h3></div>
+      <div class="sl-msg">O que isso significa em números.</div>
+      <div class="sl-grid">
+        <div><h5>No slide (ilustrativo)</h5><ul>
+          <li>~500 clientes/dia potencialmente protegidos (−0,5pp)</li>
+          <li>4–6 semanas para distinguir segmentos</li>
+          <li>~40% menos tempo de aprendizado com warm start</li>
+        </ul></div>
+        <div><h5>Notas do orador</h5><p class="sl-notes">Deixar explícito que são números ilustrativos sobre ~100k alertas/dia. O ganho real é medido contra o grupo de controle — sem promessa, com evidência.</p></div>
+      </div>
+      <div class="sl-visual"><strong>Visual:</strong> três números grandes com legenda curta.</div>
+    </article>
+
+    <article class="sl" id="s18">
+      <div class="sl-h"><span class="sl-n">Slide 18</span><h3>Risco &amp; governança<span class="newtag">novo</span></h3></div>
+      <div class="sl-msg">O que pode preocupar o conselho — e como já está endereçado.</div>
+      <div class="sl-grid">
+        <div><h5>No slide (tabela)</h5><ul>
+          <li>Algoritmo decide sozinho? → toda decisão logada e auditável, guardrails fora do algoritmo</li>
+          <li>Discriminação indevida? → contexto restrito ao que Risco já usa, dashboards por segmento</li>
+          <li>Regulador questiona variação? → alerta sempre aparece, só o formato varia</li>
+          <li>Modelo "trava" numa opção ruim? → piso de exploração + monitoramento automático</li>
+        </ul></div>
+        <div><h5>Notas do orador</h5><p class="sl-notes">Este slide deve ficar no ar mais tempo — é o que costuma tranquilizar um público de conselho. Ler item a item, com calma, sem pressa para o próximo slide.</p></div>
+      </div>
+    </article>
+
+    <article class="sl" id="s19">
+      <div class="sl-h"><span class="sl-n">Slide 19</span><h3>Perguntas do conselho<span class="newtag">novo</span></h3></div>
+      <div class="sl-msg">O que provavelmente vão perguntar — já respondido.</div>
+      <div class="sl-grid">
+        <div><h5>No slide</h5><ul>
+          <li>Isso substitui compliance/risco? Não — decide só o formato, dentro do que já é aprovado</li>
+          <li>Quanto tempo até resultado? 1–2 semanas (sinais) a 3+ meses (convergência robusta)</li>
+          <li>E se errar com cliente de risco alto? Esse caso é guardrail fixo, fora do algoritmo</li>
+          <li>Investimento? Reaproveita infraestrutura de dados já existente</li>
+        </ul></div>
+        <div><h5>Notas do orador</h5><p class="sl-notes">Apresentar como "adiantamos as perguntas que vocês provavelmente têm" — isso sinaliza preparo e reduz o tempo de perguntas ao final, mas ainda assim deixe espaço para o que não foi coberto.</p></div>
+      </div>
+    </article>
+
+    <article class="sl" id="s20">
+      <div class="sl-h"><span class="sl-n">Slide 20</span><h3>Roadmap</h3></div>
+      <div class="sl-msg">Implantação em fases, segurança em primeiro lugar.</div>
+      <div class="sl-grid">
+        <div><h5>No slide</h5><ul>
+          <li>Fase 1 Fundação · Fase 2 Piloto (com controle)</li>
+          <li>Fase 3 Escala · Fase 4 Evolução (contexto transacional)</li>
+        </ul></div>
+        <div><h5>Notas do orador</h5><p class="sl-notes">Reforçar que o piloto (fase 2) já nasce com grupo de controle — não é um "vale tudo" em produção. Prepara o pedido de aprovação do próximo slide.</p></div>
+      </div>
+      <div class="sl-visual"><strong>Visual:</strong> timeline de 4 fases.</div>
+    </article>
+
+    <article class="sl" id="s21">
+      <div class="sl-h"><span class="sl-n">Slide 21</span><h3>Fecho</h3></div>
+      <div class="sl-msg">Cada alerta vira decisão informada, não aviso genérico.</div>
+      <div class="sl-grid">
+        <div><h5>No slide</h5><ul>
+          <li>Mais proteção para quem precisa (Marli), menos atrito para quem não precisa (Lucas)</li>
+          <li>Auditável e regulatório</li>
+          <li>Mensurável contra grupo de controle</li>
+        </ul></div>
+        <div><h5>Notas do orador</h5><p class="sl-notes">Fechar retomando os dois nomes (Marli e Lucas) — dá concretude à frase de encerramento. Pedir o próximo passo: aprovação do piloto (Fase 2).</p></div>
+      </div>
+      <div class="sl-visual"><strong>Visual:</strong> frase-síntese em destaque, fundo escuro.</div>
+    </article>
+
+    <div class="footer">
+      Roteiro Executivo · MAB Pix · v2.0 — expandido com cenários, simulação, cadeia de impacto e matriz de risco —
+      <a class="backtop" href="roteiro-tecnico.html">Ver roteiro técnico →</a> ·
+      <a class="backtop" href="index.html">Central de materiais</a>
+    </div>
+  </main>
+</div>
+</body>
+</html>
