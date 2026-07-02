@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Roteiro — Apresentação Técnica · MAB Pix</title>
+<link rel="stylesheet" href="assets/style.css">
+<style>
+  .sl{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:1.3rem 1.4rem;margin:1.2rem 0;border-left:3px solid var(--violet)}
+  .sl-h{display:flex;align-items:baseline;gap:.9rem;flex-wrap:wrap}
+  .sl-n{font-family:var(--mono);font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--violet);background:var(--violet-bg);padding:.25rem .6rem;border-radius:6px;font-weight:600}
+  .sl-h h3{margin:0;font-size:1.2rem}
+  .sl-msg{margin:.7rem 0 .9rem;font-size:1.02rem;color:var(--navy);font-weight:600;line-height:1.4}
+  .sl-bridge{font-family:var(--mono);font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;color:var(--lime);margin:0 0 .7rem}
+  .sl-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.4rem}
+  .sl h5{font-family:var(--mono);font-size:.66rem;letter-spacing:.1em;text-transform:uppercase;color:var(--cyan-ink);margin:0 0 .4rem}
+  .sl ul{margin:.2rem 0;padding-left:1.1rem}.sl li{margin:.28rem 0;font-size:.92rem}
+  .sl-notes{font-size:.9rem;color:var(--ink-2);line-height:1.55}
+  .fx{font-family:var(--mono);font-size:.82rem;background:#0f2743;color:#e7edf5;padding:.5rem .7rem;border-radius:7px;margin:.4rem 0;display:block;overflow-x:auto;line-height:1.5}
+  .sl-visual{margin-top:.9rem;padding-top:.8rem;border-top:1px dashed var(--line-2);font-size:.87rem;color:var(--mut)}
+  .sl-visual strong{color:var(--ink)}
+  @media(max-width:720px){.sl-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="doc">
+  <aside class="toc">
+    <a class="home" href="index.html">← Central de materiais</a>
+    <div class="brand">Roteiro Técnico<small>Para montar o PowerPoint · v2</small></div>
+    <nav>
+      <a href="#uso">Como usar</a>
+      <a href="#s1">1. Capa</a>
+      <a href="#s2">2. Formalização</a>
+      <a href="#s3">3. Explorar × aproveitar</a>
+      <a href="#s4">4. Regret</a>
+      <a href="#s5">5. Da propensão ao bandit</a>
+      <a href="#s6">6. LinUCB / LinTS</a>
+      <a href="#s7">7. Por que não Thompson puro</a>
+      <a href="#s8">8. A/B × Bandit</a>
+      <a href="#s9">9. OPE = propensity weighting</a>
+      <a href="#s10">10. Ações fatoradas</a>
+      <a href="#s11">11. Reward shaping</a>
+      <a href="#s12">12. Warm start &amp; drift</a>
+      <a href="#s13">13. Armadilhas</a>
+      <a href="#s14">14. Recomendação &amp; síntese</a>
+    </nav>
+  </aside>
+
+  <main>
+    <div class="tag-part" style="margin-top:0">Roteiro de apresentação · Cientistas de dados (sênior, propensão &amp; A/B)</div>
+    <h1>Roteiro — Apresentação Técnica</h1>
+    <p class="subtitle">Versão revisada: 14 slides (antes 18), um fio condutor único, menos fórmulas soltas por slide e pontes explícitas com o que a área já domina — modelos de propensão e teste A/B. Os blocos <span class="fx" style="display:inline;padding:.15rem .4rem">assim</span> são as fórmulas em texto, prontas para colar no PPT.</p>
+
+    <div class="callout" id="uso">
+      <div class="h">Como usar este roteiro</div>
+      <p>Cada slide traz <strong>mensagem-chave</strong>, bullets, fórmulas (quando essenciais — no máximo 1–2 por slide) e notas de orador. As linhas <span style="color:var(--lime);font-weight:600">"Ponte"</span> marcam onde ancorar a explicação em algo que a plateia já conhece (regressão de propensão, IPW, cálculo de amostra de A/B). Duração-alvo: 25–30 min. Pré-requisitos: inferência, regressão, teste de hipótese.</p>
+    </div>
+
+    <article class="sl" id="s1">
+      <div class="sl-h"><span class="sl-n">Slide 01</span><h3>Capa</h3></div>
+      <div class="sl-msg">Alertas Pix como um contextual bandit — generalizando o que vocês já fazem.</div>
+      <div class="sl-grid">
+        <div><h5>No slide</h5><ul>
+          <li>Título + subtítulo: "de um modelo por braço para um modelo que decide o braço"</li>
+          <li>Tags: LinTS/LinUCB · Ridge por braço · IPS/DR · MABWiser</li>
+          <li>Escopo: MVP — contexto mensal por cliente</li>
+        </ul></div>
+        <div><h5>Notas do orador</h5><p class="sl-notes">Prometer um fio condutor único, não uma lista de fórmulas: sair da regressão de propensão (que já fazem) para a escolha da ação, e mostrar que o A/B não é substituído, é generalizado.</p></div>
+      </div>
+    </article>
+
+    <article class="sl" id="s2">
+      <div class="sl-h"><span class="sl-n">Slide 02</span><h3>Formalização</h3></div>
+      <div class="sl-msg">Um bandit contextual é um modelo de propensão que também escolhe a ação.</div>
+      <div class="sl-grid">
+        <div><h5>No slide</h5>
+        <span class="fx">maximizar  E[ Σ_{t=1..T} r_t ],  r_t ~ D(· | x_t, a_t)</span>
+        </div>
+        <div><h5>Notas do orador</h5><p class="sl-notes">Em propensão, x e a chegam prontos nos dados históricos. Aqui a_t é escolhido pelo próprio sistema — só aí nasce o dilema de exploração. Notação: μ_a(x)=E[r|x,a], como um p̂(y|x) por braço.</p></div>
+      </div>
+      <div class="sl-visual"><strong>Ponte:</strong> "μ_a(x) é o equivalente ao seu score de propensão — só que agora existe um por variante."</div>
+    </article>
+
+    <article class="sl" id="s3">
+      <div class="sl-h"><span class="sl-n">Slide 03</span><h3>Explorar × aproveitar</h3></div>
+      <div class="sl-msg">O A/B já resolve esse trade-off — só que em duas fases separadas no tempo.</div>
+      <div class="sl-grid">
+        <div><h5>No slide</h5><ul>
+          <li>A/B: fase 1 = 100% exploração (aloca 1/K até juntar poder) → fase 2 = 100% aproveitamento (congela o vencedor)</li>
+          <li>Bandit: funde as duas fases numa política contínua; o peso de exploração cai sozinho com a incerteza</li>
+        </ul></div>
+        <div><h5>Notas do orador</h5><p class="sl-notes">Sem fórmula neste slide — é o slide de intuição pura. Deixar claro: não é uma técnica nova, é a mesma pergunta do dimensionamento de amostra, respondida a cada decisão em vez de uma vez só.</p></div>
+      </div>
+    </article>
+
+    <article class="sl" id="s4">
+      <div class="sl-h"><span class="sl-n">Slide 04</span><h3>Regret</h3></div>
+      <div class="sl-msg">Regret é o que substitui "tamanho de amostra" quando a decisão é contínua.</div>
+      <div class="sl-grid">
+        <div><h5>No slide</h5>
+        <span class="fx">R_T = Σ_t ( μ_{a*}(x_t) − μ_{a_t}(x_t) )</span>
+        <span class="fx">Regimes:  Θ(T) fixo  →  O(ln T) bandit clássico  →  Õ(d√T) contextual</span>
+        </div>
+        <div><h5>Notas do orador</h5><p class="sl-notes">Ponte: no A/B, n ≈ 2(z_{1−α/2}+z_{1−β})²σ²/δ² responde "quanto tráfego gasto testando". Regret responde a mesma pergunta de custo, mas contínua. É por isso que alocação fixa (A/B durante o teste) paga regret linear.</p></div>
+      </div>
+      <div class="sl-visual"><strong>Visual:</strong> 3 cards de regime (linear / log / contextual), como no deck.</div>
+    </article>
+
+    <article class="sl" id="s5">
+      <div class="sl-h"><span class="sl-n">Slide 05</span><h3>Da propensão ao bandit</h3></div>
+      <div class="sl-msg">Cada braço é uma regressão de propensão com um bônus de incerteza a mais.</div>
+      <div class="sl-grid">
+        <div><h5>No slide</h5>
+        <span class="fx">θ̂_a = A_a⁻¹ b_a   (ridge por braço — mesmo objeto de uma propensão linear regularizada)</span>
+        </div>
+        <div><h5>Notas do orador</h5><p class="sl-notes">Este é o slide-ponte mais importante. Nos clássicos (ε-greedy/UCB1/TS) não há x — braço = média única, como um funil sem segmentação. O salto contextual é K regressões em paralelo, cada uma decidindo se aquele braço é o escolhido.</p></div>
+      </div>
+    </article>
+
+    <article class="sl" id="s6">
+      <div class="sl-h"><span class="sl-n">Slide 06</span><h3>LinUCB / LinTS</h3></div>
+      <div class="sl-msg">Duas formas de gastar o mesmo bônus de incerteza.</div>
+      <div class="sl-grid">
+        <div><h5>No slide</h5>
+        <span class="fx">LinUCB:  a_t = argmax_a ( ⟨x,θ̂_a⟩ + α·sqrt(xᵀA_a⁻¹x) )</span>
+        <span class="fx">LinTS:  θ̃_a ~ N(θ̂_a, α²A_a⁻¹);  a_t = argmax_a ⟨x,θ̃_a⟩</span>
+        </div>
+        <div><h5>Notas do orador</h5><p class="sl-notes">LinUCB soma um bônus explícito (largura do IC) — determinístico, auditável. LinTS sorteia um cenário plausível dos coeficientes — Bayesiano, posterior sampling. Os dois aceitam recompensa contínua nativamente (verossimilhança Gaussiana). LinTS é a 1ª escolha do projeto.</p></div>
+      </div>
+    </article>
+
+    <article class="sl" id="s7">
+      <div class="sl-h"><span class="sl-n">Slide 07</span><h3>Por que não Thompson puro</h3></div>
+      <div class="sl-msg">A armadilha específica da MABWiser: Beta exige recompensa binária.</div>
+      <div class="sl-grid">
+        <div><h5>No slide</h5>
+        <span class="fx">TS clássico:  θ_a ~ Beta(α_a,β_a);  update exige r ∈ {0,1}</span>
+        </div>
+        <div><h5>Notas do orador</h5><p class="sl-notes">Nossa recompensa é contínua (−1,0 a +0,8, ponderada por risco) — não cabe na Beta sem achatar magnitude. Resolução: LinTS já É "Thompson", com verossimilhança Gaussiana em vez de Bernoulli. Alternativa inferior: binarizer, que junta golpe e contestação no mesmo "0".</p></div>
+      </div>
+    </article>
+
+    <article class="sl" id="s8">
+      <div class="sl-h"><span class="sl-n">Slide 08</span><h3>A/B × Bandit</h3></div>
+      <div class="sl-msg">Respondem perguntas diferentes — não são concorrentes.</div>
+      <div class="sl-grid">
+        <div><h5>No slide</h5><ul>
+          <li>A/B: "qual é melhor, em média?" — inferência causal não-viesada, decisão go/no-go</li>
+          <li>Bandit: "o que é melhor, para quem, agora?" — otimização contínua, personalizada</li>
+        </ul></div>
+        <div><h5>Notas do orador</h5><p class="sl-notes">Ressalva honesta: A/B continua sendo a ferramenta certa para decisões estruturais (ex.: "removemos o checkbox de vez?"). Na prática os dois convivem: o A/B do checkbox alimenta o bandit (ver slide 12).</p></div>
+      </div>
+    </article>
+
+    <article class="sl" id="s9">
+      <div class="sl-h"><span class="sl-n">Slide 09</span><h3>OPE = propensity weighting</h3></div>
+      <div class="sl-msg">Avaliar o bandit é o mesmo IPW que vocês já usam em causal inference.</div>
+      <div class="sl-grid">
+        <div><h5>No slide</h5>
+        <span class="fx">V̂_IPS(π) = (1/n) Σ_i [ 1{a_i=π(x_i)} / p(a_i|x_i) ] · r_i</span>
+        <span class="fx">V̂_DR = V̂_IPS ajustado por um modelo de recompensa r̂ (duplamente robusto)</span>
+        </div>
+        <div><h5>Notas do orador</h5><p class="sl-notes">Coleta adaptativa quebra inferência clássica (μ̂_a viesado). Ponte direta: p(a|x) é a mesma propensão do IPW; DR é a mesma lógica de doubly-robust estimator que já usam. Requisito de projeto: logar p(a|x) em toda decisão.</p></div>
+      </div>
+    </article>
+
+    <article class="sl" id="s10">
+      <div class="sl-h"><span class="sl-n">Slide 10</span><h3>Ações fatoradas</h3></div>
+      <div class="sl-msg">Um bandit por módulo, sob decomposição aditiva.</div>
+      <div class="sl-grid">
+        <div><h5>No slide</h5>
+        <span class="fx">|A| = Π_m K_m = 4·4·2 = 32  →  Σ_m K_m = 10</span>
+        <span class="fx">E[r | x, (a^H,a^B,a^Bt)] ≈ Σ_m f_m(x, a^m)</span>
+        </div>
+        <div><h5>Notas do orador</h5><p class="sl-notes">Assume ausência de interação — testável (estimar g(x,a^H,a^B), testar H0: g=0). Convergência ~3× mais rápida justifica começar fatorado; migrar para hierárquico na fase 2 se a interação for relevante.</p></div>
+      </div>
+    </article>
+
+    <article class="sl" id="s11">
+      <div class="sl-h"><span class="sl-n">Slide 11</span><h3>Reward shaping</h3></div>
+      <div class="sl-msg">Recompensa contínua ponderada por risco.</div>
+      <div class="sl-grid">
+        <div><h5>No slide</h5>
+        <span class="fx">r_t = w(evento_t) · ( 1 + β·(s_t − ½) ),  β ≈ 0,4</span>
+        </div>
+        <div><h5>Notas do orador</h5><p class="sl-notes">w: −1,0 (golpe) … +0,8 (abandono saudável). Feedback tardio em 2 fases (partial_fit imediato + ajuste tardio γ≈0,8). Reward hacking: sem contrapeso o modelo aprenderia a bloquear todo mundo — monitorar falso abandono.</p></div>
+      </div>
+    </article>
+
+    <article class="sl" id="s12">
+      <div class="sl-h"><span class="sl-n">Slide 12</span><h3>Warm start &amp; drift</h3></div>
+      <div class="sl-msg">O A/B do checkbox vira prior; o modelo nunca "termina" de aprender.</div>
+      <div class="sl-grid">
+        <div><h5>No slide</h5><ul>
+          <li>fit() com logs do A/B (decisão, recompensa, contexto) inicializa o módulo de botões</li>
+          <li>Ridge com desconto γ&lt;1 + piso de exploração α&gt;0 combatem drift</li>
+        </ul></div>
+        <div><h5>Notas do orador</h5><p class="sl-notes">Cuidado: prior do A/B é marginal (sem contexto) — regularização suave, não verdade absoluta. Drift via KS/PSI nas features → re-fit com janela recente.</p></div>
+      </div>
+    </article>
+
+    <article class="sl" id="s13">
+      <div class="sl-h"><span class="sl-n">Slide 13</span><h3>Armadilhas × mitigações</h3></div>
+      <div class="sl-msg">O que pode dar errado — e como blindar (slide de tabela).</div>
+      <div class="sl-grid">
+        <div><h5>No slide</h5><ul>
+          <li>Feedback tardio → recompensa em 2 fases</li>
+          <li>Quebra de independência → testar interação</li>
+          <li>Confounding → ponderar por risco + controlar via r̂</li>
+          <li>Propensão não logada → logar por design</li>
+          <li>Reward hacking → penalizar falso abandono + guardrails</li>
+          <li>Drift não detectado → KS/PSI + re-fit + piso de exploração</li>
+        </ul></div>
+        <div><h5>Notas do orador</h5><p class="sl-notes">Slide de tabela — deixar no ar por mais tempo, é o material de referência que a plateia vai querer fotografar.</p></div>
+      </div>
+    </article>
+
+    <article class="sl" id="s14">
+      <div class="sl-h"><span class="sl-n">Slide 14</span><h3>Recomendação &amp; síntese</h3></div>
+      <div class="sl-msg">Configuração de partida — e por que este é o framing certo.</div>
+      <div class="sl-grid">
+        <div><h5>No slide</h5><ul>
+          <li>Modelo: LinTS(α≈0,5, λ=1) por módulo; features mensais padronizadas</li>
+          <li>Validação: Simulator (replay ordenado); DR/IPS; controle 10–15%</li>
+          <li>Operação: logar propensão; partial_fit em fila; monitorar drift/cobertura</li>
+        </ul></div>
+        <div><h5>Notas do orador</h5><p class="sl-notes">Fechar amarrando ao slide 1: isto generaliza o que a área já sabe fazer (propensão + causal inference), não é uma ferramenta à parte. Referências no rodapé: Lattimore &amp; Szepesvári (2020); Auer (2002); Li et al. (2010); Agrawal &amp; Goyal (2013); Dudík et al. (2011); Strong et al. (2021, MABWiser).</p></div>
+      </div>
+    </article>
+
+    <div class="footer">
+      Roteiro Técnico · MAB Pix · v2.0 — reduzido de 18 para 14 slides, narrativa conectada —
+      <a class="backtop" href="roteiro-executivo.html">Ver roteiro executivo →</a> ·
+      <a class="backtop" href="apostila.html">Apostila completa →</a> ·
+      <a class="backtop" href="index.html">Central</a>
+    </div>
+  </main>
+</div>
+</body>
+</html>

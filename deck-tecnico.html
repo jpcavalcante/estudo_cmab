@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MAB Contextual · Deck Técnico</title>
+<script>
+  window.MathJax = {
+    tex: { inlineMath: [['\\(','\\)']], displayMath: [['\\[','\\]']] },
+    svg: { fontCache: 'global' },
+    options: { skipHtmlTags: ['script','noscript','style','textarea'] }
+  };
+</script>
+<script id="MathJax-script" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js"></script>
+<style>
+  :root{
+    --bg:#0a0d14;--panel:#11161f;--panel2:#0d111a;--ink:#e9eef6;--mut:#8a97ad;
+    --line:rgba(138,151,173,.16);--line2:rgba(138,151,173,.30);
+    --cyan:#52d4dc;--violet:#b39cf5;--lime:#9be36a;--amber:#f0b450;--rose:#f2748c;
+    --serif:ui-serif, Georgia, "Times New Roman", Cambria, serif;--sans:ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;--mono:ui-monospace, "SF Mono", "Cascadia Code", "Segoe UI Mono", Consolas, "Liberation Mono", monospace;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{height:100%}
+  body{background:var(--bg);font-family:var(--sans);color:var(--ink);overflow:hidden;-webkit-font-smoothing:antialiased}
+  mjx-container{color:var(--ink)!important}
+
+  .deck{position:fixed;inset:0}
+  .slide{
+    position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;
+    padding:clamp(1.8rem,5vw,5.5rem) clamp(2rem,6vw,7rem);
+    opacity:0;visibility:hidden;transform:translateY(18px);
+    transition:opacity .5s ease,transform .5s ease,visibility .5s;
+    background:
+      radial-gradient(120% 100% at 0% 0%, rgba(82,212,220,.05), transparent 42%),
+      radial-gradient(120% 100% at 100% 100%, rgba(179,156,245,.05), transparent 46%),
+      var(--bg);
+    overflow-y:auto;
+  }
+  .slide.active{opacity:1;visibility:visible;transform:translateY(0)}
+  .slide.active .rv{animation:rise .55s cubic-bezier(.2,.7,.2,1) both}
+  .slide.active .rv:nth-child(2){animation-delay:.06s}
+  .slide.active .rv:nth-child(3){animation-delay:.12s}
+  .slide.active .rv:nth-child(4){animation-delay:.18s}
+  .slide.active .rv:nth-child(5){animation-delay:.24s}
+  .slide.active .rv:nth-child(6){animation-delay:.30s}
+  .slide.active .rv:nth-child(7){animation-delay:.36s}
+  @keyframes rise{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+  .slide::before{content:"";position:absolute;inset:0;pointer-events:none;
+    background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);
+    background-size:54px 54px;opacity:.5;mask-image:radial-gradient(130% 130% at 50% 0%,#000 35%,transparent 85%)}
+  .slide>*{position:relative;z-index:1}
+
+  .kick{font-family:var(--mono);font-size:.7rem;letter-spacing:.28em;text-transform:uppercase;color:var(--cyan);margin-bottom:1rem;display:flex;gap:.65rem;align-items:center}
+  .kick::before{content:"";width:24px;height:1px;background:var(--cyan)}
+  h1{font-family:var(--serif);font-weight:600;line-height:1.04;letter-spacing:-.015em}
+  h2{font-family:var(--serif);font-weight:600;font-size:clamp(1.5rem,3.1vw,2.5rem);line-height:1.1;letter-spacing:-.01em;margin-bottom:.9rem}
+  h2 em{font-style:italic;color:var(--cyan)}
+  h3{font-family:var(--sans);font-size:.98rem;font-weight:600;margin-bottom:.5rem;display:flex;align-items:center;gap:.55rem}
+  p{line-height:1.6}
+  .lead{font-size:clamp(.96rem,1.35vw,1.1rem);color:var(--mut);max-width:76ch;line-height:1.62}
+  .mut{color:var(--mut)}
+  .cyan{color:var(--cyan)}.violet{color:var(--violet)}.lime{color:var(--lime)}.amber{color:var(--amber)}.rose{color:var(--rose)}
+  b,strong{color:var(--ink);font-weight:600}
+  .dot{width:8px;height:8px;border-radius:50%;display:inline-block;flex:none}
+  .bridge{font-family:var(--mono);font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;color:var(--lime);display:flex;gap:.5rem;align-items:center;margin:.9rem 0 .3rem}
+  .bridge::before{content:"⇄";color:var(--lime)}
+
+  .formula{
+    background:linear-gradient(180deg,var(--panel),var(--panel2));
+    border:1px solid var(--line);border-left:2px solid var(--cyan);
+    border-radius:10px;padding:.9rem 1.2rem;margin:.7rem 0;overflow-x:auto;
+    font-size:1.02rem;
+  }
+  .formula.v{border-left-color:var(--violet)}
+  .formula.a{border-left-color:var(--amber)}
+  .note{font-family:var(--mono);font-size:.78rem;color:var(--mut);line-height:1.5}
+
+  .cols{display:grid;gap:clamp(1rem,2vw,1.8rem)}
+  .c2{grid-template-columns:1fr 1fr}.c3{grid-template-columns:repeat(3,1fr)}
+  .c2u{grid-template-columns:1.15fr .85fr}
+  .card{background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid var(--line);border-radius:14px;padding:1.2rem 1.25rem}
+  .card p{color:var(--mut);font-size:.9rem}
+  .card.cy{border-color:rgba(82,212,220,.35)}.card.vi{border-color:rgba(179,156,245,.35)}.card.am{border-color:rgba(240,180,80,.35)}.card.ro{border-color:rgba(242,116,140,.35)}.card.li{border-color:rgba(155,227,106,.35)}
+
+  table.t{width:100%;border-collapse:collapse;font-size:.85rem;margin-top:.3rem}
+  table.t th,table.t td{text-align:left;padding:.5rem .75rem;border-bottom:1px solid var(--line);vertical-align:top}
+  table.t th{font-family:var(--mono);font-size:.64rem;letter-spacing:.1em;text-transform:uppercase;color:var(--cyan);font-weight:500}
+  table.t td.g{color:var(--lime)}table.t td.r{color:var(--rose)}table.t td.y{color:var(--amber)}
+  table.t tr.hi td{background:rgba(82,212,220,.06)}
+  table.t code,.code{font-family:var(--mono);font-size:.84em;background:rgba(179,156,245,.13);color:var(--violet);padding:.1rem .4rem;border-radius:5px}
+
+  ul.tick{list-style:none;display:flex;flex-direction:column;gap:.5rem;margin-top:.3rem}
+  ul.tick li{display:flex;gap:.6rem;align-items:flex-start;font-size:.92rem;color:var(--mut);line-height:1.5}
+  ul.tick li::before{content:"▹";color:var(--cyan);flex:none;margin-top:.05rem}
+  ul.tick li.x::before{content:"✕";color:var(--rose)}
+  ul.tick li.ok::before{content:"✓";color:var(--lime)}
+
+  .pill{font-family:var(--mono);font-size:.72rem;padding:.28rem .65rem;border-radius:6px;border:1px solid var(--line2);color:var(--mut)}
+  .pill.on{background:var(--cyan);color:#04181a;border-color:transparent;font-weight:600}
+
+  .cover h1{font-size:clamp(2.1rem,5.6vw,4.2rem);max-width:20ch}
+  .cover .sub{margin-top:1.6rem;font-size:clamp(1rem,1.6vw,1.2rem);color:var(--mut);max-width:64ch;line-height:1.55}
+  .cover .meta{margin-top:2.4rem;display:flex;gap:2rem;flex-wrap:wrap;font-family:var(--mono);font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--mut)}
+  .cover .meta b{display:block;color:var(--ink);font-family:var(--sans);font-size:.92rem;text-transform:none;letter-spacing:0;margin-top:.25rem;font-weight:500}
+  .tagrow{display:flex;gap:.5rem;flex-wrap:wrap;margin-top:1.6rem}
+
+  .foot{position:absolute;bottom:1.1rem;left:clamp(2rem,6vw,7rem);font-family:var(--mono);font-size:.64rem;letter-spacing:.14em;text-transform:uppercase;color:var(--mut);opacity:.7;z-index:1}
+
+  .nav{position:fixed;bottom:1.3rem;left:50%;transform:translateX(-50%);z-index:50;display:flex;align-items:center;gap:.9rem;background:rgba(10,13,20,.75);backdrop-filter:blur(10px);border:1px solid var(--line2);border-radius:999px;padding:.45rem .65rem}
+  .nav button{background:none;border:none;color:var(--ink);cursor:pointer;width:32px;height:32px;border-radius:50%;display:grid;place-items:center;font-size:1.05rem}
+  .nav button:hover{background:rgba(255,255,255,.08)}
+  .nav .count{font-family:var(--mono);font-size:.74rem;color:var(--mut);min-width:52px;text-align:center}
+  .progress{position:fixed;top:0;left:0;height:2px;background:linear-gradient(90deg,var(--cyan),var(--violet));z-index:60;transition:width .35s}
+  .dots{position:fixed;right:1.2rem;top:50%;transform:translateY(-50%);z-index:50;display:flex;flex-direction:column;gap:.45rem}
+  .dots i{width:7px;height:7px;border-radius:50%;background:rgba(138,151,173,.3);cursor:pointer;transition:.25s;display:block}
+  .dots i.on{background:var(--cyan);transform:scale(1.5)}
+  .hint{position:fixed;bottom:1.4rem;right:1.3rem;font-family:var(--mono);font-size:.62rem;letter-spacing:.08em;color:var(--mut);opacity:.6;z-index:50}
+
+  .flow{display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;margin-top:.6rem}
+  .flow .step{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:.55rem .8rem;font-size:.82rem;color:var(--ink)}
+  .flow .arr{color:var(--mut);font-size:.9rem}
+
+  @media(max-width:860px){.c2,.c3,.c2u{grid-template-columns:1fr}.formula{font-size:.9rem}.slide{padding-top:3.2rem}}
+</style>
+</head>
+<body>
+<div class="progress" id="progress"></div>
+<div class="dots" id="dots"></div>
+<div class="deck" id="deck">
+
+  <!-- 1 COVER -->
+  <section class="slide cover active">
+    <div class="kick rv">Contextual Bandits · Deep Dive Técnico</div>
+    <h1 class="rv">Alocação adaptativa de alertas Pix como um <em style="font-style:italic;color:var(--cyan)">contextual bandit</em>.</h1>
+    <p class="sub rv">Um fio condutor só: como sair de "um modelo por braço" (o que vocês já fazem) para "um modelo que decide qual braço mostrar" — e por que isso generaliza o teste A/B que já está rodando, em vez de substituí-lo.</p>
+    <div class="tagrow rv">
+      <span class="pill on">LinTS / LinUCB</span><span class="pill">Ridge por braço</span><span class="pill">IPS / DR</span><span class="pill">MABWiser 2.7.4</span>
+    </div>
+    <div class="meta rv">
+      <div>Audiência<b>Cientistas de Dados (sênior) · propensão &amp; A/B</b></div>
+      <div>Pré-requisitos<b>Regressão · inferência causal · testes de hipótese</b></div>
+      <div>Escopo<b>MVP — contexto mensal por cliente</b></div>
+    </div>
+    <div class="foot">01 — Abertura</div>
+  </section>
+
+  <!-- 2 FORMALIZATION -->
+  <section class="slide">
+    <div class="kick rv">Formalização, na linguagem que vocês já usam</div>
+    <h2 class="rv">Um bandit contextual é um <em>modelo de propensão que também decide a ação</em>.</h2>
+    <div class="cols c2u rv">
+      <div>
+        <p class="lead">Em propensão vocês estimam \(P(y\mid x)\) para uma ação já definida por outra área. Aqui, a cada cliente \(t\) com contexto \(x_t\) (perfil mensal), o próprio modelo escolhe a ação \(a_t\in\mathcal A\) (qual variante mostrar) e só depois observa a recompensa \(r_t\).</p>
+        <div class="formula">\[ \text{maximizar}\quad \mathbb{E}\!\left[\sum_{t=1}^{T} r_t\right],\qquad r_t \sim \mathcal{D}(\cdot\mid x_t,a_t) \]</div>
+        <p class="note">A diferença estrutural: em propensão, \(x\) e \(a\) chegam prontos nos dados históricos. Aqui, \(a_t\) é escolhido pelo próprio sistema — e isso é exatamente o que introduz o dilema de exploração que um modelo supervisionado não precisa resolver.</p>
+      </div>
+      <div class="card cy">
+        <h3><span class="dot" style="background:var(--cyan)"></span>Notação</h3>
+        <ul class="tick" style="font-size:.88rem">
+          <li>\(\mathcal{A}\): braços (variantes)</li>
+          <li>\(x_t\): contexto, \(d\) features mensais</li>
+          <li>\(\mu_a(x)=\mathbb{E}[r\mid x,a]\) — como um \(\hat p(y\mid x)\), um por braço</li>
+          <li>\(a^\star(x)=\arg\max_a \mu_a(x)\)</li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot">02 — Formalização</div>
+  </section>
+
+  <!-- 3 EXPLORE/EXPLOIT INTUITION -->
+  <section class="slide">
+    <div class="kick rv">O trade-off central</div>
+    <h2 class="rv">Explorar × aproveitar — o A/B já resolve isso, só que em duas fases separadas.</h2>
+    <div class="cols c2 rv">
+      <div class="card am">
+        <h3 class="amber">O A/B de vocês hoje</h3>
+        <p>Fase 1 — <b>100% exploração</b>: aloca tráfego uniformemente entre variantes até juntar poder estatístico. Fase 2 — <b>100% aproveitamento</b>: encerra o teste, escolhe o vencedor médio, congela.</p>
+      </div>
+      <div class="card cy">
+        <h3 class="cyan">O bandit</h3>
+        <p>Funde as duas fases numa política contínua: em cada decisão, pondera "o que sei" (aproveitar) com "o quanto ainda não sei" (explorar) — e o peso da exploração <b>diminui sozinho</b> conforme a incerteza cai, sem precisar declarar um \(T_0\) fixo.</p>
+      </div>
+    </div>
+    <p class="lead rv" style="margin-top:.9rem">É a mesma pergunta que vocês já fazem ao dimensionar um A/B — "quanto tráfego custa aprender?" — só que respondida a cada decisão, e não uma vez só no desenho do experimento.</p>
+    <div class="foot">03 — Explorar × aproveitar</div>
+  </section>
+
+  <!-- 4 REGRET AS THE METRIC THAT REPLACES SAMPLE SIZE -->
+  <section class="slide">
+    <div class="kick rv">A métrica que substitui "poder estatístico"</div>
+    <h2 class="rv">Regret: o custo acumulado de ainda estar aprendendo.</h2>
+    <div class="rv"><div class="formula">\[ R_T \;=\; \sum_{t=1}^{T}\big(\mu_{a^\star}(x_t)-\mu_{a_t}(x_t)\big) \]</div></div>
+    <div class="bridge rv">Ponte com o que vocês já calculam</div>
+    <p class="lead rv" style="margin-bottom:.5rem">No A/B, o cálculo de amostra (\(n\approx 2(z_{1-\alpha/2}+z_{1-\beta})^2\sigma^2/\delta^2\)) responde "quanto tráfego preciso gastar <i>testando</i> antes de decidir". Regret responde a mesma pergunta de custo, mas de forma contínua: quanto se perde por decisão subótima <i>enquanto</i> o sistema aprende.</p>
+    <div class="cols c3 rv">
+      <div class="card"><h3 class="rose" style="font-size:.9rem">Alocação fixa</h3><p>Regret \(\Theta(T)\) — cresce linear enquanto durar. É o que o A/B paga durante o teste.</p></div>
+      <div class="card"><h3 class="amber" style="font-size:.9rem">Bandit sem contexto</h3><p>Regret \(O(\ln T)\) — ótimo clássico (UCB1, Thompson).</p></div>
+      <div class="card"><h3 class="cyan" style="font-size:.9rem">Bandit contextual</h3><p>Regret \(\tilde O(d\sqrt{T})\) — LinUCB/LinTS, cresce com a dimensão do contexto.</p></div>
+    </div>
+    <div class="foot">04 — Regret</div>
+  </section>
+
+  <!-- 5 FROM PROPENSITY REGRESSION TO ARM SELECTION -->
+  <section class="slide">
+    <div class="kick rv">A peça central do desenho</div>
+    <h2 class="rv">Cada braço é uma <em>regressão de propensão</em> com um bônus de incerteza.</h2>
+    <div class="cols c2u rv">
+      <div>
+        <p class="lead" style="margin-bottom:.5rem">Nos algoritmos clássicos (ε-greedy, UCB1, Thompson Beta) não há \(x\) — o braço tem uma única média estimada, como um funil sem segmentação. O salto contextual é literalmente o que vocês fazem em propensão: uma regressão \(x\mapsto r\) <b>por braço</b>.</p>
+        <div class="formula">\[ \hat\theta_a=A_a^{-1}b_a,\qquad A_a=\lambda I_d+\!\!\sum_{s:a_s=a}\!\! x_s x_s^{\top},\quad b_a=\!\!\sum_{s:a_s=a}\!\! r_s x_s \]</div>
+        <p class="note">Isso é ridge regression — mesmo objeto que um modelo de propensão linear regularizado, refeito de forma incremental (fecha-forma, sem re-treino do zero) e mantido em paralelo, um por variante.</p>
+      </div>
+      <div class="card vi">
+        <h3><span class="dot" style="background:var(--violet)"></span>O que muda de fato</h3>
+        <ul class="tick" style="font-size:.87rem">
+          <li>Propensão: 1 modelo, ação fixa, decide um score</li>
+          <li>Bandit: \(K\) modelos (1/braço), decide <b>qual ação tomar</b></li>
+          <li>O "bônus" de incerteza é o ingrediente novo — não existe em propensão batch</li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot">05 — Da propensão ao bandit</div>
+  </section>
+
+  <!-- 6 LINUCB / LINTS UNIFIED -->
+  <section class="slide">
+    <div class="kick rv">Contextual — paramétrico</div>
+    <h2 class="rv">LinUCB e LinTS: duas formas de gastar o mesmo bônus de incerteza.</h2>
+    <div class="cols c2 rv">
+      <div class="card cy">
+        <h3 class="cyan">LinUCB — otimismo explícito</h3>
+        <div class="formula" style="font-size:.94rem">\[ a_t=\arg\max_a\Big(\langle x_t,\hat\theta_a\rangle+\alpha\sqrt{x_t^{\top}A_a^{-1}x_t}\Big) \]</div>
+        <p>Soma um termo proporcional à largura do intervalo de confiança da predição — quanto mais incerto, maior o bônus. Decisão determinística dado o estado: auditável.</p>
+      </div>
+      <div class="card vi">
+        <h3 class="violet">LinTS — amostra da incerteza</h3>
+        <div class="formula v" style="font-size:.94rem">\[ \tilde\theta_a\sim\mathcal{N}(\hat\theta_a,\alpha^2A_a^{-1}),\quad a_t=\arg\max_a\langle x_t,\tilde\theta_a\rangle \]</div>
+        <p>Em vez de somar um bônus, sorteia um cenário plausível dos coeficientes e age nele. É Bayesiano — a mesma lógica de posterior sampling, aplicada aos coeficientes da regressão.</p>
+      </div>
+    </div>
+    <p class="lead rv" style="margin-top:.8rem">Os dois aceitam recompensa contínua nativamente, porque a verossimilhança é Gaussiana (regressão), não Bernoulli. <b class="cyan">LinTS é a 1ª escolha</b> para o nosso caso: recompensa contínua + queremos que a exploração decaia sozinha.</p>
+    <div class="foot">06 — LinUCB / LinTS</div>
+  </section>
+
+  <!-- 7 WHY NOT PLAIN THOMPSON -->
+  <section class="slide">
+    <div class="kick rv">Uma armadilha específica da MABWiser</div>
+    <h2 class="rv">Por que o Thompson Sampling "de livro-texto" não serve aqui.</h2>
+    <div class="cols c2u rv">
+      <div>
+        <p class="lead" style="margin-bottom:.5rem">O Thompson Sampling clássico (context-free) mantém uma posterior <b>Beta</b> por braço — conjugada exata só para recompensa binária \(r\in\{0,1\}\). Nossa recompensa é contínua (−1,0 a +0,8, ponderada por risco): não cabe na Beta sem perder magnitude.</p>
+        <div class="formula v" style="font-size:.9rem">\[ (\alpha_a,\beta_a)\leftarrow(\alpha_a+r_t,\ \beta_a+1-r_t),\quad r_t\in\{0,1\}\ \text{obrigatório} \]</div>
+      </div>
+      <div class="card">
+        <h3 style="font-size:.92rem">Resolução</h3>
+        <ul class="tick" style="font-size:.87rem">
+          <li class="ok"><b>LinTS</b> já é "Thompson", só que com verossimilhança Gaussiana — aceita contínuo nativamente</li>
+          <li class="x">Usar TS Beta + <code>binarizer</code> funciona, mas achata golpe (−1,0) e contestação (−0,7) no mesmo "0"</li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot">07 — Thompson e recompensa contínua</div>
+  </section>
+
+  <!-- 8 A/B x BANDIT -->
+  <section class="slide">
+    <div class="kick rv">O contraste central</div>
+    <h2 class="rv">A/B e bandit respondem perguntas diferentes — não são concorrentes.</h2>
+    <div class="cols c2 rv">
+      <div class="card am">
+        <h3 class="amber">A/B — a pergunta certa é "qual é melhor, em média?"</h3>
+        <ul class="tick" style="font-size:.87rem">
+          <li>Estimativa causal não-viesada de um efeito específico</li>
+          <li>Decisão go/no-go de produto, com \(T_0\) e \(\delta\) fixados a priori</li>
+          <li>Continua sendo a ferramenta certa para decisões estruturais (ex.: "removemos o checkbox de vez?")</li>
+        </ul>
+      </div>
+      <div class="card cy">
+        <h3 class="cyan">Bandit — a pergunta certa é "o que é melhor, para quem, agora?"</h3>
+        <ul class="tick" style="font-size:.87rem">
+          <li>Otimiza a política continuamente, regret sublinear em vez de \(\Theta(T)\)</li>
+          <li>Personaliza por contexto — o A/B só entrega o <b>ATE médio</b></li>
+          <li>Não precisa declarar horizonte fixo; se adapta a drift</li>
+        </ul>
+      </div>
+    </div>
+    <p class="note rv" style="margin-top:.8rem">Na prática: o A/B do checkbox informa o MAB (próximo slide) em vez de ser descartado. São ferramentas complementares no mesmo pipeline de decisão.</p>
+    <div class="foot">08 — A/B × Bandit</div>
+  </section>
+
+  <!-- 9 OFF-POLICY EVAL = PROPENSITY WEIGHTING -->
+  <section class="slide">
+    <div class="kick rv">A ressalva estatística — e uma ponte direta</div>
+    <h2 class="rv">Avaliar o bandit é <em>propensity score weighting</em>, aplicado à política.</h2>
+    <p class="lead rv" style="margin-bottom:.5rem">Coleta adaptativa quebra inferência clássica: \(\hat\mu_a\) fica viesado, ICs não cobrem. A solução é a mesma que vocês usam em inferência causal observacional — ponderar cada observação pelo inverso da probabilidade de ter recebido aquele tratamento.</p>
+    <div class="cols c2 rv">
+      <div>
+        <h3 class="cyan" style="font-size:.9rem">IPS = IPW que vocês já conhecem</h3>
+        <div class="formula" style="font-size:.9rem">\[ \hat V_{\text{IPS}}(\pi)=\frac1n\sum_{i}\frac{\mathbb{1}[a_i=\pi(x_i)]}{p(a_i\mid x_i)}\,r_i \]</div>
+        <p class="note">\(p(a\mid x)\) é a propensão de <i>logging</i> — a mesma peça central do IPW. Requer overlap (\(p>0\)) para não-viés.</p>
+      </div>
+      <div>
+        <h3 class="violet" style="font-size:.9rem">Doubly Robust = IPW + outcome model</h3>
+        <div class="formula v" style="font-size:.84rem">\[ \hat V_{\text{DR}}=\frac1n\sum_{i}\Big(\hat r(x_i,\pi(x_i))+\frac{\mathbb{1}[a_i=\pi(x_i)]}{p(a_i\mid x_i)}\big(r_i-\hat r(x_i,a_i)\big)\Big) \]</div>
+        <p class="note">Exatamente a lógica de um estimador duplamente robusto em causal inference: certo se o modelo de propensão <b>ou</b> o de resposta estiver correto.</p>
+      </div>
+    </div>
+    <p class="note rv" style="margin-top:.7rem">Implicação de projeto: <b>logar \(p(a\mid x)\)</b> em toda decisão é obrigatório — sem isso não há como reproduzir esse tipo de avaliação depois.</p>
+    <div class="foot">09 — Avaliação off-policy</div>
+  </section>
+
+  <!-- 10 FACTORED ACTION SPACE -->
+  <section class="slide">
+    <div class="kick rv">Nosso desenho — espaço de ações</div>
+    <h2 class="rv">Um bandit por módulo, não um bandit para a combinação inteira.</h2>
+    <div class="cols c2u rv">
+      <div>
+        <p class="lead" style="margin-bottom:.5rem">A ação é a tripla \((a^{H},a^{B},a^{Bt})\). Fatorar em 3 bandits assume decomposição aditiva aproximada da recompensa entre módulos:</p>
+        <div class="formula">\[ |\mathcal{A}|=\prod_m K_m = 4\cdot4\cdot2 = 32 \quad\longrightarrow\quad \sum_m K_m = 10 \]</div>
+        <div class="formula v" style="font-size:.9rem">\[ \mathbb{E}[r\mid x,(a^H,a^B,a^{Bt})]\approx\sum_{m} f_m(x,a^m) \]</div>
+      </div>
+      <div class="card am">
+        <h3><span class="dot" style="background:var(--amber)"></span>O custo da simplificação</h3>
+        <ul class="tick" style="font-size:.86rem">
+          <li>Assume ausência de interação entre módulos — testável estimando \(g(x,a^H,a^B)\) e checando \(H_0\!:g=0\)</li>
+          <li>Convergência ~3× mais rápida justifica começar fatorado</li>
+          <li>Se a interação for relevante → fase 2, bandit hierárquico</li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot">10 — Ações fatoradas</div>
+  </section>
+
+  <!-- 11 REWARD DESIGN -->
+  <section class="slide">
+    <div class="kick rv">Nosso desenho — recompensa</div>
+    <h2 class="rv">Reward shaping contínuo, ponderado pelo score de risco.</h2>
+    <div class="rv"><div class="formula">\[ r_t = w(\text{evento}_t)\cdot\big(1+\beta(s_t-\tfrac12)\big),\qquad \beta\approx 0{,}4 \]</div></div>
+    <div class="cols c3 rv" style="margin-top:.4rem">
+      <div class="card"><h3 class="rose" style="font-size:.88rem">Sinal</h3><p>\(w\): −1,0 (golpe) … +0,8 (abandono saudável). A magnitude carrega informação — por isso a policy precisa aceitar contínuo.</p></div>
+      <div class="card"><h3 class="amber" style="font-size:.88rem">Feedback tardio</h3><p>Golpe/contestação chegam em \(t+\Delta\). Duas fases: <code>partial_fit</code> imediato + ajuste tardio descontado.</p></div>
+      <div class="card"><h3 class="cyan" style="font-size:.88rem">Reward hacking</h3><p>Sem contrapeso, o modelo aprenderia a maximizar abandono bloqueando todo mundo. Monitorar <span class="rose">falso abandono</span> como guarda.</p></div>
+    </div>
+    <div class="foot">11 — Reward shaping</div>
+  </section>
+
+  <!-- 12 NON-STATIONARITY + WARM START -->
+  <section class="slide">
+    <div class="kick rv">Robustez e cold start</div>
+    <h2 class="rv">O A/B do checkbox vira <em>prior</em>; o modelo nunca "termina" de aprender.</h2>
+    <div class="cols c2 rv">
+      <div>
+        <h3 class="cyan" style="font-size:.9rem">Warm start com o A/B atual</h3>
+        <p style="margin-bottom:.5rem;font-size:.92rem;color:var(--mut)">Os logs do A/B (decisão, recompensa contínua, contexto) inicializam o <code>fit()</code> do módulo de botões — o mesmo prior marginal que o A/B já mediu, só que agora refinado por contexto.</p>
+        <p class="note">Cuidado: é um prior <b>marginal</b> (sem contexto) — usar como regularização suave, não como verdade, ou atrasa a descoberta contextual.</p>
+      </div>
+      <div>
+        <h3 class="violet" style="font-size:.9rem">Não-estacionariedade</h3>
+        <ul class="tick" style="font-size:.87rem">
+          <li>Padrões de golpe mudam → política ótima deriva</li>
+          <li>Ridge com desconto: \(A_a\leftarrow\gamma A_a+xx^\top\), \(\gamma<1\)</li>
+          <li>Piso de exploração (\(\alpha>0\)) mantém o aprendizado vivo</li>
+          <li>Drift detectado via KS/PSI nas features → re-<code>fit</code> com janela recente</li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot">12 — Warm start &amp; drift</div>
+  </section>
+
+  <!-- 13 PITFALLS -->
+  <section class="slide">
+    <div class="kick rv">Armadilhas conhecidas</div>
+    <h2 class="rv">O que pode dar errado — e a mitigação.</h2>
+    <div class="rv">
+      <table class="t">
+        <tr><th>Risco</th><th>Sintoma</th><th>Mitigação</th></tr>
+        <tr><td>Feedback tardio</td><td>Modelo "otimista" com eventos rápidos</td><td class="g">Recompensa em 2 fases; desconto temporal</td></tr>
+        <tr><td>Quebra de independência (módulos)</td><td>Predição agregada pior que o esperado</td><td class="g">Testar interação; migrar p/ fatorado/hierárquico</td></tr>
+        <tr><td>Confounding na recompensa</td><td>Score de risco correlaciona com desfecho e contexto</td><td class="g">Ponderar por risco; controlar via \(\hat r(x,a)\)</td></tr>
+        <tr><td>Propensão não logada</td><td>OPE inviável, auditoria fraca</td><td class="g">Logar \(p(a\mid x)\) por design</td></tr>
+        <tr><td>Reward hacking</td><td>Abandono ↑ e falso-abandono ↑ juntos</td><td class="g">Penalizar falso abandono; guardrails de risco</td></tr>
+        <tr><td>Drift não detectado</td><td>Regret cresce silenciosamente</td><td class="g">KS/PSI + re-fit com janela; piso de exploração</td></tr>
+      </table>
+    </div>
+    <div class="foot">13 — Armadilhas</div>
+  </section>
+
+  <!-- 14 RECOMMENDATION + CLOSING -->
+  <section class="slide">
+    <div class="kick rv">Recomendação e síntese</div>
+    <h2 class="rv">Configuração de partida — e por que este é o framing certo.</h2>
+    <div class="cols c3 rv">
+      <div class="card cy"><h3 class="cyan">Modelo</h3><p><code>LinTS(α≈0,5, λ=1)</code> por módulo, features mensais padronizadas (<code>StandardScaler</code> serializado junto).</p></div>
+      <div class="card vi"><h3 class="violet">Validação</h3><p>Simulador com replay ordenado; DR/IPS vs. logging; grupo de controle estático 10–15%.</p></div>
+      <div class="card am"><h3 class="amber">Operação</h3><p>Logar propensão; <code>partial_fit</code> em fila serializada por módulo; monitorar drift e cobertura.</p></div>
+    </div>
+    <ul class="tick rv" style="margin-top:1rem;font-size:.92rem">
+      <li class="ok">Generaliza o A/B — não o substitui: mesma disciplina de causal inference, aplicada continuamente</li>
+      <li class="ok">Regret sublinear no lugar de \(\Theta(T)\): menos tráfego "gasto" aprendendo</li>
+      <li class="ok">Recompensa contínua + LinTS preserva a magnitude do desfecho, algo que a Beta do TS clássico perderia</li>
+      <li class="ok">Auditável e avaliável off-policy com as mesmas ferramentas de propensity weighting já dominadas pelo time</li>
+    </ul>
+    <div class="card rv" style="margin-top:1.1rem">
+      <p class="note" style="line-height:1.7">
+        <b class="cyan">Referências.</b> Lattimore &amp; Szepesvári, <i>Bandit Algorithms</i> (2020) · Auer (2002), UCB1 ·
+        Li et al. (2010), LinUCB · Agrawal &amp; Goyal (2013), LinTS ·
+        Dudík et al. (2011), Doubly Robust OPE · Strong, Kleynhans &amp; Kadioglu (2021), MABWiser (IJAIT).
+      </p>
+    </div>
+    <div class="foot">14 — Recomendação &amp; encerramento</div>
+  </section>
+
+</div>
+
+<div class="nav">
+  <button id="prev" aria-label="Anterior">‹</button>
+  <span class="count" id="count">01 / 14</span>
+  <button id="next" aria-label="Próximo">›</button>
+</div>
+<div class="hint">← → / espaço</div>
+
+<script>
+  const slides=[...document.querySelectorAll('.slide')];
+  const dots=document.getElementById('dots');
+  const progress=document.getElementById('progress');
+  const count=document.getElementById('count');
+  let i=0;
+  slides.forEach((_,idx)=>{const d=document.createElement('i');d.onclick=()=>go(idx);dots.appendChild(d);});
+  const dotEls=[...dots.children];
+  const pad=n=>String(n+1).padStart(2,'0');
+  function go(n){
+    i=Math.max(0,Math.min(slides.length-1,n));
+    slides.forEach((s,idx)=>s.classList.toggle('active',idx===i));
+    dotEls.forEach((d,idx)=>d.classList.toggle('on',idx===i));
+    progress.style.width=((i+1)/slides.length*100)+'%';
+    count.textContent=pad(i)+' / '+pad(slides.length-1);
+    slides[i].scrollTop=0;
+  }
+  document.getElementById('next').onclick=()=>go(i+1);
+  document.getElementById('prev').onclick=()=>go(i-1);
+  document.addEventListener('keydown',e=>{
+    if(['ArrowRight',' ','PageDown'].includes(e.key)){e.preventDefault();go(i+1);}
+    if(['ArrowLeft','PageUp'].includes(e.key)){e.preventDefault();go(i-1);}
+    if(e.key==='Home')go(0); if(e.key==='End')go(slides.length-1);
+  });
+  let x0=null;
+  addEventListener('touchstart',e=>x0=e.touches[0].clientX,{passive:true});
+  addEventListener('touchend',e=>{if(x0===null)return;const dx=e.changedTouches[0].clientX-x0;if(Math.abs(dx)>55)go(i+(dx<0?1:-1));x0=null;},{passive:true});
+  go(0);
+</script>
+</body>
+</html>

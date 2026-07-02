@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Apostila — MAB Contextual para Alertas Pix</title>
+<link rel="stylesheet" href="assets/style.css">
+<style>
+  .svgwrap{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:1rem 1.1rem;margin:1.1rem 0}
+  .svgwrap svg{width:100%;height:auto;display:block}
+  .svgcap{font-family:var(--mono);font-size:.68rem;letter-spacing:.06em;text-transform:uppercase;color:var(--mut);margin-top:.5rem;text-align:center}
+  .qbox{background:var(--paper);border:1px solid var(--line-2);border-radius:10px;padding:.9rem 1.1rem;margin:.9rem 0}
+  .qbox .q{font-weight:650;margin-bottom:.4rem}
+  .qbox details{margin-top:.4rem}
+  .qbox summary{cursor:pointer;color:var(--cyan-ink);font-family:var(--mono);font-size:.78rem;letter-spacing:.05em;text-transform:uppercase}
+  .qbox .a{margin-top:.5rem;padding-top:.5rem;border-top:1px dashed var(--line-2);font-size:.93rem;color:var(--ink-2)}
+  .stepbar{display:flex;flex-wrap:wrap;gap:.4rem;margin:.8rem 0}
+  .stepbar span{font-family:var(--mono);font-size:.72rem;background:var(--paper);border:1px solid var(--line-2);border-radius:7px;padding:.3rem .6rem;color:var(--ink-2)}
+  .bpill{display:inline-block;font-family:var(--mono);font-size:.66rem;letter-spacing:.06em;text-transform:uppercase;background:var(--mint-bg);color:var(--lime);border-radius:6px;padding:.15rem .5rem;margin-right:.4rem}
+  .checklist{list-style:none;padding-left:0;margin:.8rem 0}
+  .checklist li{padding:.4rem .2rem .4rem 1.7rem;position:relative;border-bottom:1px dashed var(--line);font-size:.93rem}
+  .checklist li:last-child{border-bottom:none}
+  .checklist li::before{content:"☐";position:absolute;left:0;top:.4rem;color:var(--cyan-ink)}
+  .barrow{display:flex;align-items:center;gap:.6rem;margin:.35rem 0;font-size:.86rem}
+  .barrow .lbl{width:150px;flex:none;color:var(--ink-2)}
+  .barrow .track{flex:1;background:#eee9db;border-radius:5px;height:14px;overflow:hidden}
+  .barrow .fill{height:100%;border-radius:5px}
+  .barrow .val{width:56px;flex:none;font-family:var(--mono);font-size:.76rem;color:var(--mut);text-align:right}
+</style>
+</head>
+<body>
+<div class="doc">
+  <aside class="toc">
+    <a class="home" href="index.html">← Central de materiais</a>
+    <div class="brand">Apostila Técnica<small>MAB Contextual · Alertas Pix</small></div>
+    <nav>
+      <span class="part">I · Fundamentos</span>
+      <a href="#s1">1. Contexto de negócio</a>
+      <a href="#s2">2. Estático → adaptativo</a>
+      <a href="#s3">3. Explorar × aproveitar</a>
+      <a href="#s4">4. Fundamentos de MAB</a>
+      <a href="#s5">5. Pontes: propensão &amp; A/B</a>
+      <a href="#s6">6. MAB contextual</a>
+      <a href="#ex1" class="sub">Exercícios — Parte I</a>
+      <span class="part">II · Arquitetura</span>
+      <a href="#s7">7. Módulos do alerta</a>
+      <a href="#s8">8. Um MAB por módulo</a>
+      <a href="#s9">9. Recompensa contínua</a>
+      <a href="#s10">10. Do evento à recompensa</a>
+      <a href="#ex2" class="sub">Exercícios — Parte II</a>
+      <span class="part">III · MABWiser</span>
+      <a href="#s11">11. Visão geral</a>
+      <a href="#s12">12. Learning policies (context-free)</a>
+      <a href="#s13">13. Learning policies (contextuais)</a>
+      <a href="#s14">14. Neighborhood policies</a>
+      <a href="#s15">15. API completa</a>
+      <a href="#s16">16. TS &amp; recompensa contínua</a>
+      <a href="#s17">17. Simulação passo a passo</a>
+      <a href="#s18">18. O Simulator embutido</a>
+      <a href="#ex3" class="sub">Exercícios — Parte III</a>
+      <span class="part">IV · Produção</span>
+      <a href="#s19">19. Implementação</a>
+      <a href="#s20">20. Integração com o A/B</a>
+      <a href="#s21">21. Exploração × exploitação</a>
+      <a href="#s22">22. Não-estacionariedade</a>
+      <a href="#s23">23. Pipeline de produção</a>
+      <a href="#s24">24. Métricas &amp; monitoramento</a>
+      <a href="#s25">25. Avaliação off-policy</a>
+      <a href="#ex4" class="sub">Exercícios — Parte IV</a>
+      <span class="part">V · Estudo &amp; referência</span>
+      <a href="#s26">26. Estudo de caso completo</a>
+      <a href="#s27">27. Checklist de implementação</a>
+      <a href="#s28">28. Gabarito geral</a>
+      <a href="#s29">29. FAQ — Negócio</a>
+      <a href="#s30">30. FAQ — Técnico</a>
+      <a href="#s31">31. Glossário</a>
+      <a href="#s32">32. Referências</a>
+    </nav>
+  </aside>
+
+  <main>
+    <div class="tag-part" style="margin-top:0">Apostila Técnica · v2.0 · Edição estendida · MVP contexto mensal por cliente</div>
+    <h1>MAB Contextual para Proteção Anti-Fraude em Alertas de Pix</h1>
+    <p class="subtitle">Da teoria dos Multi-Armed Bandits à implementação em produção com a biblioteca MABWiser — com exemplos numéricos resolvidos passo a passo, diagramas e exercícios de fixação. Material de referência e de estudo para cientistas de dados, produto e áreas executivas.</p>
+
+    <div class="callout ok">
+      <div class="h">✓ Como ler este documento</div>
+      <p>As Partes I–II dão a base conceitual, com exemplos concretos (acessível a produto/negócio). As Partes III–IV são operacionais, com código e contas (cientistas de dados). A Parte V é consulta rápida e material de revisão — inclui exercícios com gabarito, pensados para quem quer estudar o tema do zero até a implementação. Cada seção é autocontida o suficiente para virar um bloco de slide ou uma sessão de estudo isolada.</p>
+    </div>
+
+    <div class="callout">
+      <div class="h">📎 Convenções usadas neste documento</div>
+      <p><span class="bpill">exemplo</span> marca uma conta numérica resolvida do início ao fim — o objetivo é que você consiga refazê-la com uma calculadora. <span class="bpill">ponte</span> marca uma analogia direta com modelos de propensão ou testes A/B, para quem já vem dessa bagagem. Caixas <span style="color:var(--cyan-ink);font-weight:600">"Pergunte a si mesmo"</span> ao fim de cada parte são exercícios — clique para revelar a resposta.</p>
+    </div>
+
+    <!-- ============ PART I ============ -->
+    <div class="tag-part">Parte I — Fundamentos</div>
+
+    <h2 id="s1">1. Contexto de negócio</h2>
+    <p>Golpes via Pix cresceram de forma acentuada desde a criação do arranjo em 2020. A liquidação instantânea e irreversível, que é a virtude do Pix, é também o que o torna atraente para fraude: uma vez confirmada, a transferência dificilmente é revertida. Instituições financeiras são obrigadas a exibir alertas antes de transações com características de risco, mas o formato <strong>estático</strong> desses alertas sofre de um problema central: <strong>fadiga do usuário</strong>.</p>
+    <p>Quando todos os clientes veem exatamente a mesma tela, o sistema fica previsível. Golpistas treinam vítimas a "clicar rápido" e ignorar o aviso — o alerta vira ruído. A efetividade cai com o tempo, e não há mecanismo de auto-correção. É o mesmo fenômeno que banners de consentimento de cookies sofreram: no início as pessoas liam, hoje a maioria clica "aceitar" sem olhar. Um alerta de segurança que sofre do mesmo destino deixa de proteger.</p>
+
+    <h3>Taxonomia de golpes relevantes</h3>
+    <ul>
+      <li><strong>Falso funcionário / falsa central:</strong> criminoso liga fingindo ser do banco e induz transferência "para proteger a conta".</li>
+      <li><strong>Engenharia social afetiva:</strong> falso relacionamento, falsa emergência familiar.</li>
+      <li><strong>Falso pagamento / falso boleto:</strong> QR code ou chave adulterados.</li>
+      <li><strong>Coação / sequestro relâmpago:</strong> vítima sob pressão imediata.</li>
+    </ul>
+    <p>Cada tipo tem uma "assinatura" comportamental distinta, e alertas diferentes funcionam melhor para cada uma. Uma vítima de coação, por exemplo, provavelmente não vai ler um texto longo — um header curto e direto, com um botão de confirmação redundante, tem mais chance de gerar uma pausa. Já uma vítima de engenharia social afetiva pode reagir melhor a um exemplo concreto de golpe similar ("veja como esse tipo de pedido normalmente termina"). É essa heterogeneidade que motiva um sistema <em>adaptativo</em>: não existe um único alerta "ótimo" — existe o alerta ótimo <em>para aquele contexto</em>.</p>
+
+    <h3>KPIs de negócio</h3>
+    <table class="tbl">
+      <tr><th>Métrica</th><th>Descrição</th><th>Direção</th></tr>
+      <tr><td>Taxa de golpe consumado</td><td>Cliente transferiu e foi vítima confirmada</td><td class="r">Minimizar</td></tr>
+      <tr><td>Taxa de contestação</td><td>Cliente contestou após a transação</td><td class="r">Minimizar</td></tr>
+      <tr><td>Abandono saudável</td><td>Cliente cancelou alerta de risco real</td><td class="g">Maximizar</td></tr>
+      <tr><td>Falso abandono</td><td>Transação legítima abandonada por atrito</td><td class="r">Minimizar</td></tr>
+      <tr><td>Taxa de refação</td><td>Nova tentativa após cancelar</td><td class="y">Monitorar</td></tr>
+    </table>
+
+    <div class="callout">
+      <div class="h"><span class="bpill">exemplo</span> Por que "só minimizar abandono" não funciona</div>
+      <p>Imagine dois alertas: o Alerta A tem taxa de abandono de 40%, e o Alerta B tem taxa de abandono de 8%. À primeira vista, B parece "menos intrusivo" e melhor. Mas ao decompor: no Alerta A, 35 dos 40 pontos percentuais de abandono são <em>saudáveis</em> (evitaram golpe) e 5 são falsos abandonos. No Alerta B, os 8 pontos são quase todos falso abandono — o alerta é tão fraco que nem os clientes em risco real páram. Isso é exatamente por que a recompensa precisa distinguir os <em>tipos</em> de abandono (Seção 9), e não apenas contar cliques.</p>
+    </div>
+
+    <h2 id="s2">2. Do estático ao adaptativo</h2>
+    <p>A tela de alerta atual é um bloco fixo. A proposta é decompô-la em <strong>módulos</strong> — header, corpo, seção de botões, elementos visuais — cada um com variantes. A combinação exibida passa a ser uma <em>decisão</em>, tomada por perfil de cliente.</p>
+
+    <div class="svgwrap">
+      <svg viewBox="0 0 900 220" xmlns="http://www.w3.org/2000/svg">
+        <text x="20" y="28" font-family="ui-serif,Georgia,serif" font-size="16" font-weight="600" fill="#141a24">Tela estática (hoje)</text>
+        <rect x="20" y="42" width="230" height="150" rx="10" fill="#ffffff" stroke="#d3cdbf"/>
+        <rect x="34" y="56" width="202" height="26" rx="5" fill="#c0405a" opacity=".16"/>
+        <text x="46" y="73" font-size="11" fill="#c0405a" font-family="ui-monospace,monospace">Header fixo</text>
+        <rect x="34" y="92" width="202" height="60" rx="5" fill="#0e7c8b" opacity=".12"/>
+        <text x="46" y="126" font-size="11" fill="#0a5560" font-family="ui-monospace,monospace">Corpo fixo</text>
+        <rect x="34" y="162" width="202" height="20" rx="5" fill="#6b4fbf" opacity=".14"/>
+        <text x="46" y="176" font-size="10" fill="#6b4fbf" font-family="ui-monospace,monospace">Botões fixos</text>
+        <text x="290" y="118" font-size="22" fill="#697587">→</text>
+        <text x="345" y="28" font-family="ui-serif,Georgia,serif" font-size="16" font-weight="600" fill="#141a24">Tela modular (proposta)</text>
+        <rect x="345" y="42" width="230" height="150" rx="10" fill="#ffffff" stroke="#d3cdbf"/>
+        <rect x="359" y="56" width="202" height="26" rx="5" fill="#c0405a" opacity=".28"/>
+        <text x="371" y="73" font-size="11" fill="#c0405a" font-family="ui-monospace,monospace">Header · 1 de 4</text>
+        <rect x="359" y="92" width="202" height="60" rx="5" fill="#0e7c8b" opacity=".24"/>
+        <text x="371" y="126" font-size="11" fill="#0a5560" font-family="ui-monospace,monospace">Corpo · 1 de 4</text>
+        <rect x="359" y="162" width="202" height="20" rx="5" fill="#6b4fbf" opacity=".26"/>
+        <text x="371" y="176" font-size="10" fill="#6b4fbf" font-family="ui-monospace,monospace">Botões · 1 de 2</text>
+        <text x="615" y="118" font-size="20" fill="#697587">⟳</text>
+        <text x="655" y="60" font-size="11" fill="#3a4453" font-family="ui-sans-serif,sans-serif">cada módulo tem</text>
+        <text x="655" y="76" font-size="11" fill="#3a4453" font-family="ui-sans-serif,sans-serif">variantes que o</text>
+        <text x="655" y="92" font-size="11" fill="#3a4453" font-family="ui-sans-serif,sans-serif">bandit escolhe por</text>
+        <text x="655" y="108" font-size="11" fill="#3a4453" font-family="ui-sans-serif,sans-serif">perfil de cliente</text>
+      </svg>
+      <div class="svgcap">Figura 2.1 — de um bloco fixo para três decisões independentes por tela</div>
+    </div>
+
+    <h3>Por que não um modelo supervisionado?</h3>
+    <table class="tbl">
+      <tr><th>Característica</th><th>Supervisionado (ex.: modelo de propensão)</th><th>MAB contextual</th></tr>
+      <tr><td>Rótulos necessários</td><td>Muitos (histórico rotulado)</td><td>Poucos (aprende online)</td></tr>
+      <tr><td>Quem escolhe a ação</td><td>Alguém fora do modelo decide, o modelo só prevê</td><td>O próprio modelo decide qual ação tomar</td></tr>
+      <tr><td>Adaptação a drift</td><td>Retreino periódico</td><td>Contínuo</td></tr>
+      <tr><td>Dilema de exploração</td><td>Não resolve</td><td>Resolve nativamente</td></tr>
+      <tr><td>Custo de exploração</td><td>Invisível</td><td>Explícito e controlado</td></tr>
+    </table>
+    <p>O ponto fundamental: um modelo de propensão prediz a probabilidade de um desfecho dado <em>uma ação já definida</em> — ele responde "qual a chance desse cliente ser fraudado", não "qual alerta mostrar para esse cliente". Um bandit ataca o problema de <strong>decisão sob incerteza com feedback parcial</strong>: ele escolhe a ação <em>e</em> aprende com o resultado dessa escolha, sem nunca observar o que teria acontecido com as outras opções.</p>
+
+    <div class="callout">
+      <div class="h"><span class="bpill">ponte</span> Se eu já tenho um modelo de propensão de fraude, por que não uso ele direto?</div>
+      <p>Você provavelmente já tem <span class="m">P</span>(fraude | contexto) — um modelo excelente para <em>decidir se</em> mostra um alerta. Mas ele não te diz <em>qual</em> alerta, dentre 10 combinações possíveis, reduz mais a fraude sem aumentar o falso abandono. Isso exigiria treinar 10 modelos de propensão em paralelo (um por combinação), e mesmo assim você teria o problema de que os dados históricos foram gerados por uma política antiga (provavelmente a tela estática) — não há registro de "o que teria acontecido" se outra variante tivesse sido mostrada. O bandit resolve isso gerando os próprios dados de forma controlada.</p>
+    </div>
+
+    <h2 id="s3">3. Explorar × aproveitar — a intuição antes da matemática</h2>
+    <p>Antes de qualquer fórmula, vale fixar a ideia central com uma situação familiar: escolher um restaurante numa cidade nova. Você tem duas opções — voltar ao restaurante que já testou e gostou (aproveitar o que sabe), ou testar um novo lugar que pode ser melhor, mas também pode decepcionar (explorar). Se você sempre volta ao mesmo lugar, nunca descobre se existe algo melhor. Se você sempre testa lugares novos, desperdiça jantares em lugares ruins mesmo depois de já ter encontrado algo bom.</p>
+    <p>Um Multi-Armed Bandit formaliza exatamente essa escolha, repetida milhares de vezes, com a informação de cada rodada usada para melhorar a próxima. A metáfora que dá nome à técnica: uma fileira de caça-níqueis ("<em>bandidos de um braço só</em>"), cada um com uma probabilidade de pagamento desconhecida. Com fichas limitadas, qual jogar?</p>
+
+    <div class="callout ok">
+      <div class="h"><span class="bpill">ponte</span> Isso não é uma técnica nova para você</div>
+      <p>Você já resolveu esse trade-off no desenho de um teste A/B: quanto tráfego "gastar" testando (explorando) antes de declarar um vencedor e rodar 100% nele (aproveitando)? A diferença é que o A/B resolve isso em <strong>duas fases separadas no tempo</strong> — primeiro testa tudo igualmente, depois escolhe um vencedor e para de testar. O bandit funde as duas fases numa política contínua: a cada decisão, pondera o que já sabe com o quanto ainda não sabe, e o peso da exploração cai sozinho conforme a incerteza diminui — sem você precisar declarar um tamanho de amostra fixo a priori.</p>
+    </div>
+
+    <h2 id="s4">4. Fundamentos formais de Multi-Armed Bandits</h2>
+    <h4>Notação e objetivo</h4>
+    <p>A cada passo <span class="m">t</span> escolhemos <span class="m">a</span><sub>t</sub> ∈ 𝒜 e observamos recompensa <span class="m">r</span><sub>t</sub>. Maximizamos a recompensa acumulada:</p>
+    <div class="eq">maximizar &nbsp; 𝔼[ <span class="op">∑</span><sub>t=1</sub><sup>T</sup> <span class="m">r</span><sub>t</sub> ]</div>
+    <p>Equivalentemente, minimizamos o <strong>regret</strong> — o quanto perdemos por não ter jogado sempre o braço ótimo <span class="m">a</span><sup>★</sup>:</p>
+    <div class="eq"><span class="m">R</span><sub>T</sub> = <span class="op">∑</span><sub>t=1</sub><sup>T</sup> ( <span class="m">μ</span><sub>a★</sub> − <span class="m">μ</span><sub>a<sub>t</sub></sub> ) = <span class="op">∑</span><sub>t</sub> Δ<sub>a<sub>t</sub></sub></div>
+
+    <div class="callout">
+      <div class="h"><span class="bpill">exemplo</span> O custo de explorar, com números</div>
+      <p>Três braços com recompensa média real 0,10 / 0,30 / 0,50 (o braço ótimo é o terceiro). Se durante 1.000 decisões escolhermos uniformemente (⅓ cada), a recompensa média observada é ≈ (0,10+0,30+0,50)/3 = 0,30, e o regret acumulado é <span class="m">R</span><sub>1000</sub> ≈ 1000·(0,50−0,30) = <strong>200</strong>. Um bom bandit converge rapidamente para o braço 0,50 e reduz esse regret a algo <em>logarítmico</em> em T — na prática, algo como 20–40 de regret total em vez de 200, porque só "paga" o preço de explorar enquanto ainda há incerteza real sobre qual braço é o melhor.</p>
+    </div>
+
+    <h4>Algoritmos clássicos (sem contexto)</h4>
+    <p>Antes de chegar ao caso contextual (o que de fato usaremos), vale entender os três algoritmos base — eles são a fundação conceitual de tudo que vem depois.</p>
+    <p><strong>ε-greedy:</strong> com probabilidade ε escolhe um braço aleatório; caso contrário, o melhor conhecido até agora. Simples, mas explora "às cegas" — gasta exploração igualmente em braços já reconhecidamente ruins.</p>
+    <div class="eq a"><span class="op">UCB</span><sub>a</sub>(<span class="m">t</span>) = <span class="m">μ̂</span><sub>a</sub> + <span class="op">√</span><span class="rad"><span class="frac"><span class="n">2 ln <span class="m">t</span></span><span class="d"><span class="m">N</span><sub>a</sub>(<span class="m">t</span>)</span></span></span></div>
+    <p><strong>UCB1</strong> (otimismo sob incerteza): o bônus (segundo termo) encolhe conforme o braço é visitado mais vezes (<span class="m">N</span><sub>a</sub> cresce), direcionando a exploração para onde a incerteza ainda importa — diferente do ε-greedy, que explora de forma indiscriminada.</p>
+    <p><strong>Thompson Sampling</strong> (Bayesiano): mantém uma posterior sobre a recompensa de cada braço, amostra dela e age greedy sobre a amostra. A probabilidade de escolher um braço iguala a probabilidade posterior dele ser o ótimo (<em>probability matching</em>). Costuma vencer na prática (Chapelle &amp; Li, 2011), mas — ponto crítico para este projeto — sua forma clássica exige recompensa <strong>binária</strong> (ver Seção 16).</p>
+
+    <div class="callout">
+      <div class="h"><span class="bpill">exemplo</span> Dez rodadas à mão — comparando os três algoritmos</div>
+      <p>Suponha 2 braços com médias reais desconhecidas de 0,30 (A) e 0,60 (B). A tabela mostra uma sequência plausível de decisões e o que cada estratégia "sabe" depois de cada rodada, com ε=0,2 no ε-greedy e α=1 no UCB1. Os valores de recompensa observada são ilustrativos (simulação de uma rodada específica, não a média real).</p>
+      <table class="tbl">
+        <tr><th>Rodada</th><th>ε-greedy escolhe</th><th>Recompensa</th><th>μ̂ acumulado (A / B)</th></tr>
+        <tr><td>1</td><td>A (exploração forçada inicial)</td><td>0</td><td>0,00 / —</td></tr>
+        <tr><td>2</td><td>B (exploração forçada inicial)</td><td>1</td><td>0,00 / 1,00</td></tr>
+        <tr><td>3</td><td>B (greedy: melhor até agora)</td><td>1</td><td>0,00 / 1,00</td></tr>
+        <tr><td>4</td><td>B (greedy)</td><td>0</td><td>0,00 / 0,67</td></tr>
+        <tr><td>5</td><td>A (ε: exploração aleatória)</td><td>1</td><td>0,50 / 0,67</td></tr>
+        <tr class="hi"><td>...</td><td>converge para B</td><td>—</td><td>tende a 0,30 / 0,60</td></tr>
+      </table>
+      <p>Note como, mesmo com uma amostra pequena e ruidosa (B "pagou" 1 em duas das três primeiras vezes), a política já favorece fortemente B a partir da rodada 3 — e só corrige o rumo por causa da exploração forçada da rodada 5. É exatamente esse mecanismo, repetido em escala de milhares de clientes por dia, que faz o bandit convergir.</p>
+    </div>
+
+    <div class="qbox">
+      <div class="q">Pergunte a si mesmo: por que o ε-greedy com ε fixo nunca "termina" de explorar, mesmo depois de ter certeza de qual braço é o melhor?</div>
+      <details><summary>Ver resposta</summary><div class="a">Porque a probabilidade de exploração ε é uma constante, independente do quanto já se aprendeu. Mesmo depois de 10 mil rodadas com o braço ótimo claramente identificado, o algoritmo ainda vai escolher aleatoriamente com probabilidade ε — desperdiçando decisões. Isso é o que causa o regret Θ(T) (linear) do ε-greedy com ε fixo: um custo constante por decisão, para sempre. UCB1 e Thompson Sampling não têm esse problema porque a exploração decai naturalmente com a certeza acumulada.</div></details>
+    </div>
+
+    <h2 id="s5">5. Pontes com o que você já conhece</h2>
+    <p>Esta seção existe para acelerar a curva de aprendizado de quem já trabalha com propensão e A/B — o vocabulário muda, mas boa parte da matemática é reaproveitada.</p>
+    <table class="tbl">
+      <tr><th>O que você já faz</th><th>O equivalente no bandit</th></tr>
+      <tr><td>Regressão logística de propensão <span class="m">P</span>(y|x)</td><td>Uma regressão <span class="m">f</span><sub>a</sub>(x) <strong>por braço</strong> — LinUCB/LinTS mantêm K regressões em paralelo</td></tr>
+      <tr><td>Cálculo de tamanho de amostra do A/B</td><td>Regret — mesma pergunta ("quanto custa aprender?"), respondida continuamente em vez de uma vez</td></tr>
+      <tr><td>Inverse Propensity Weighting (IPW) em inferência causal</td><td>Avaliação off-policy (IPS) — pondera cada observação pelo inverso da propensão de logging</td></tr>
+      <tr><td>Estimador duplamente robusto</td><td>Doubly Robust off-policy evaluation — mesma lógica, aplicada à política do bandit</td></tr>
+      <tr><td>Teste A/B como "verdade" sobre o efeito médio</td><td>Warm start — o resultado do A/B vira prior/inicialização do bandit, não é descartado</td></tr>
+    </table>
+    <p>A peça verdadeiramente nova, que não existe em modelagem supervisionada tradicional, é o <strong>bônus de incerteza</strong>: o bandit não escolhe só "o que a regressão prevê como melhor", ele soma (ou amostra) um termo que recompensa a incerteza, para garantir que braços pouco testados continuem sendo considerados. É esse termo que resolve o dilema de exploração — e é ele que a Seção 6 e a Parte III detalham.</p>
+
+    <h2 id="s6">6. MAB contextual</h2>
+    <p>No MAB clássico a recompensa esperada de um braço é fixa. No <strong>contextual</strong>, ela depende de um vetor de contexto <span class="m">x</span><sub>t</sub> observado antes da decisão:</p>
+    <div class="eq">𝔼[ <span class="m">r</span><sub>t</sub> | <span class="m">x</span><sub>t</sub>, <span class="m">a</span> ] = <span class="m">f</span>(<span class="m">x</span><sub>t</sub>, <span class="m">a</span>)</div>
+    <p>Um cliente de 68 anos, à noite, transferindo valor alto, é um contexto radicalmente diferente de um jovem pagando um contato salvo. O módulo ótimo difere — e o bandit contextual aprende essa dependência.</p>
+
+    <h3>Duas famílias de contexto</h3>
+    <table class="tbl">
+      <tr><th>Família</th><th>Como funciona</th><th>Na MABWiser</th></tr>
+      <tr><td>Paramétrico</td><td>Um modelo (regressão) por braço mapeando x → r</td><td>LinUCB, LinTS, LinGreedy</td></tr>
+      <tr><td>Não-paramétrico</td><td>Agrupa contextos similares; MAB context-free por vizinhança</td><td>Radius, KNearest, Clusters, TreeBandit</td></tr>
+    </table>
+
+    <div class="callout warn">
+      <div class="h">⚠ Escopo do MVP</div>
+      <p>No MVP, o contexto <span class="m">x</span><sub>t</sub> são <strong>features mensais do cliente</strong> — faixa etária, volume mensal de Pix, recorrência de uso, score de risco do cliente. <strong>Não há visão transacional no momento da decisão</strong> (valor, conta destino, horário). Features transacionais em tempo real são uma evolução de fase posterior. Os <em>desfechos</em> (golpe, contestação, abandono) continuam observáveis e alimentam a recompensa.</p>
+    </div>
+
+    <div class="callout">
+      <div class="h"><span class="bpill">exemplo</span> Mesmo braço, contexto diferente, decisão diferente</div>
+      <p>Considere o módulo de botões (com ou sem checkbox de confirmação extra). Um bandit <em>não</em>-contextual aprenderia uma única resposta: "checkbox ajuda" ou "checkbox atrapalha", em média, para toda a base. Um bandit contextual pode aprender, por exemplo, que para clientes com <span class="m">x</span> = (faixa etária alta, baixa recorrência de Pix), o checkbox reduz golpe sem aumentar falso abandono — mas para <span class="m">x</span> = (jovem, uso recorrente diário), o mesmo checkbox só adiciona atrito, porque esse perfil já entende bem o que está fazendo. A mesma variante, dois contextos, duas decisões ótimas diferentes — é exatamente isso que <span class="m">f</span>(x, a) aprende a capturar.</p>
+    </div>
+
+    <div class="tag-part" style="margin-top:2.4rem">Exercícios de fixação — Parte I</div>
+    <h2 id="ex1" style="border-top:none;margin-top:.6rem;padding-top:0">Pergunte a si mesmo</h2>
+    <div class="qbox">
+      <div class="q">1. Por que um modelo de propensão de fraude, sozinho, não resolve o problema de "qual alerta mostrar"?</div>
+      <details><summary>Ver resposta</summary><div class="a">Porque ele prevê a probabilidade de um desfecho dada uma ação fixa — ele não decide entre ações, nem aprende com o resultado da própria decisão. Ele responderia "qual a chance de fraude", não "qual variante de alerta reduz essa chance". Faltaria também dado histórico do tipo certo: registros de "o que aconteceria" com variantes que nunca foram mostradas.</div></details>
+    </div>
+    <div class="qbox">
+      <div class="q">2. Um A/B e um bandit contextual, aplicados ao mesmo problema, chegam à mesma resposta?</div>
+      <details><summary>Ver resposta</summary><div class="a">Não necessariamente. O A/B estima um efeito médio (ATE) — "o checkbox é melhor, em média, para toda a base". O bandit contextual pode descobrir que a resposta certa depende do cliente — melhor para uns, pior para outros. As duas respostas podem coexistir sem contradição: a média pode favorecer o checkbox mesmo que ele prejudique um subgrupo específico.</div></details>
+    </div>
+    <div class="qbox">
+      <div class="q">3. Por que a exploração do UCB1 "encolhe sozinha" enquanto a do ε-greedy (com ε fixo) não?</div>
+      <details><summary>Ver resposta</summary><div class="a">O bônus do UCB1 tem N_a(t) no denominador — quanto mais vezes o braço foi jogado, menor o bônus, então a decisão passa a depender cada vez mais da média estimada e cada vez menos da incerteza. O ε-greedy usa uma probabilidade constante, desligada de quanto já se sabe sobre cada braço.</div></details>
+    </div>
+
+    <!-- ============ PART II ============ -->
+    <div class="tag-part">Parte II — Arquitetura da solução</div>
+
+    <h2 id="s7">7. Arquitetura de módulos</h2>
+    <p>A tela é composta por três módulos com variantes:</p>
+    <table class="tbl">
+      <tr><th>Módulo</th><th>Variantes</th><th>MAB</th></tr>
+      <tr><td>Header</td><td>Atenção · Urgente · Reflexivo · Estatístico (4)</td><td>MAB_Header</td></tr>
+      <tr><td>Body</td><td>Curto · Exemplo · Checklist · Dados destino (4)</td><td>MAB_Body</td></tr>
+      <tr><td>Botões</td><td>Sem checkbox · Com checkbox (2)</td><td>MAB_Botoes</td></tr>
+    </table>
+
+    <div class="svgwrap">
+      <svg viewBox="0 0 900 260" xmlns="http://www.w3.org/2000/svg">
+        <rect x="20" y="20" width="150" height="60" rx="10" fill="#e3f1f3" stroke="#0e7c8b"/>
+        <text x="95" y="46" text-anchor="middle" font-size="12" fill="#0a5560" font-family="ui-sans-serif,sans-serif" font-weight="600">Contexto mensal</text>
+        <text x="95" y="63" text-anchor="middle" font-size="10" fill="#3a4453" font-family="ui-monospace,monospace">x_t (4 features)</text>
+        <line x1="170" y1="50" x2="260" y2="50" stroke="#697587" stroke-width="1.4"/>
+        <line x1="170" y1="50" x2="260" y2="130" stroke="#697587" stroke-width="1.4"/>
+        <line x1="170" y1="50" x2="260" y2="210" stroke="#697587" stroke-width="1.4"/>
+        <rect x="260" y="20" width="150" height="60" rx="10" fill="#fbe9ec" stroke="#c0405a"/>
+        <text x="335" y="46" text-anchor="middle" font-size="12" fill="#c0405a" font-family="ui-sans-serif,sans-serif" font-weight="600">MAB_Header</text>
+        <text x="335" y="63" text-anchor="middle" font-size="10" fill="#3a4453" font-family="ui-monospace,monospace">4 variantes</text>
+        <rect x="260" y="100" width="150" height="60" rx="10" fill="#e3f1f3" stroke="#0e7c8b"/>
+        <text x="335" y="126" text-anchor="middle" font-size="12" fill="#0a5560" font-family="ui-sans-serif,sans-serif" font-weight="600">MAB_Body</text>
+        <text x="335" y="143" text-anchor="middle" font-size="10" fill="#3a4453" font-family="ui-monospace,monospace">4 variantes</text>
+        <rect x="260" y="180" width="150" height="60" rx="10" fill="#efe9fb" stroke="#6b4fbf"/>
+        <text x="335" y="206" text-anchor="middle" font-size="12" fill="#6b4fbf" font-family="ui-sans-serif,sans-serif" font-weight="600">MAB_Botões</text>
+        <text x="335" y="223" text-anchor="middle" font-size="10" fill="#3a4453" font-family="ui-monospace,monospace">2 variantes</text>
+        <line x1="410" y1="50" x2="500" y2="130" stroke="#c0405a" stroke-width="1.4"/>
+        <line x1="410" y1="130" x2="500" y2="130" stroke="#0e7c8b" stroke-width="1.4"/>
+        <line x1="410" y1="210" x2="500" y2="130" stroke="#6b4fbf" stroke-width="1.4"/>
+        <rect x="500" y="60" width="130" height="140" rx="12" fill="#ffffff" stroke="#d3cdbf"/>
+        <rect x="512" y="72" width="106" height="24" rx="5" fill="#c0405a" opacity=".3"/>
+        <rect x="512" y="102" width="106" height="55" rx="5" fill="#0e7c8b" opacity=".24"/>
+        <rect x="512" y="163" width="106" height="20" rx="5" fill="#6b4fbf" opacity=".26"/>
+        <text x="565" y="215" text-anchor="middle" font-size="10" fill="#3a4453" font-family="ui-monospace,monospace">tela composta</text>
+        <text x="700" y="60" font-size="11" fill="#3a4453" font-family="ui-sans-serif,sans-serif">3 decisões</text>
+        <text x="700" y="76" font-size="11" fill="#3a4453" font-family="ui-sans-serif,sans-serif">em paralelo,</text>
+        <text x="700" y="92" font-size="11" fill="#3a4453" font-family="ui-sans-serif,sans-serif">mesmo contexto,</text>
+        <text x="700" y="108" font-size="11" fill="#3a4453" font-family="ui-sans-serif,sans-serif">se juntam numa</text>
+        <text x="700" y="124" font-size="11" fill="#3a4453" font-family="ui-sans-serif,sans-serif">única tela</text>
+      </svg>
+      <div class="svgcap">Figura 7.1 — um contexto, três bandits independentes, uma tela composta (diagrama-âncora do projeto)</div>
+    </div>
+
+    <h2 id="s8">8. Um MAB por módulo — a fatoração</h2>
+    <p>O espaço conjunto de combinações é o produto das variantes; a fatoração por módulo é a soma:</p>
+    <div class="eq">|𝒜| = <span class="op">∏</span><sub>m</sub> <span class="m">K</span><sub>m</sub> = 4·4·2 = <strong>32</strong> &nbsp;⟶&nbsp; <span class="op">∑</span><sub>m</sub> <span class="m">K</span><sub>m</sub> = 4+4+2 = <strong>10</strong></div>
+    <p>Fatorar assume que a recompensa se decompõe de forma aproximadamente aditiva entre módulos:</p>
+    <div class="eq v">𝔼[ <span class="m">r</span> | <span class="m">x</span>, (<span class="m">a</span><sup>H</sup>,<span class="m">a</span><sup>B</sup>,<span class="m">a</span><sup>Bt</sup>) ] ≈ <span class="op">∑</span><sub>m</sub> <span class="m">f</span><sub>m</sub>(<span class="m">x</span>, <span class="m">a</span><sup>m</sup>)</div>
+    <p>É uma simplificação (ignora interações entre módulos), mas reduz o número de braços de 32 para 10 e acelera a convergência em ~3×.</p>
+
+    <div class="callout">
+      <div class="h"><span class="bpill">exemplo</span> Por que 32 braços aprende mais devagar que 10</div>
+      <p>Se um bandit precisa de, digamos, ~500 observações por braço para reduzir a incerteza a um nível aceitável, um bandit único sobre as 32 combinações precisa de 32×500 = <strong>16.000</strong> decisões para "aquecer" todos os braços. Com a fatoração em 3 bandits (4+4+2=10 braços), o total cai para 10×500 = <strong>5.000</strong> decisões — e, como os três bandits aprendem em paralelo (cada cliente alimenta os três ao mesmo tempo), o tempo de calendário até a convergência inicial cai ainda mais.</p>
+    </div>
+
+    <p>A hipótese de independência é <em>testável</em>: estima-se um termo de interação <span class="m">g</span>(<span class="m">x</span>,<span class="m">a</span><sup>H</sup>,<span class="m">a</span><sup>B</sup>) — por exemplo, via uma regressão com termos de produto entre as variantes escolhidas — e testa-se <span class="m">H</span><sub>0</sub>: <span class="m">g</span>=0 nos dados já coletados. Se a hipótese nula for rejeitada com efeito prático relevante, migra-se para um bandit fatorado/hierárquico (fase 2 do roadmap).</p>
+
+    <h2 id="s9">9. Função de recompensa contínua</h2>
+    <p>O comportamento pós-alerta é rico e não-binário. Traduzimos cada desfecho num peso, e ponderamos pelo risco do cliente:</p>
+    <table class="tbl">
+      <tr><th>Evento</th><th>Código</th><th>Peso base <span class="m">w</span></th></tr>
+      <tr><td>Golpe confirmado</td><td><code>FRAUD_CONFIRMED</code></td><td class="r">−1,0</td></tr>
+      <tr><td>Contestação</td><td><code>DISPUTE_FILED</code></td><td class="r">−0,7</td></tr>
+      <tr><td>Abandono saudável</td><td><code>HEALTHY_ABANDON</code></td><td class="g">+0,8</td></tr>
+      <tr><td>Falso abandono</td><td><code>FALSE_ABANDON</code></td><td class="y">−0,3</td></tr>
+      <tr><td>Refação após cancelar</td><td><code>RETRY_AFTER_CANCEL</code></td><td class="y">−0,5</td></tr>
+      <tr><td>Conclusão normal</td><td><code>NORMAL_COMPLETE</code></td><td class="g">+0,1</td></tr>
+    </table>
+    <div class="eq"><span class="m">r</span><sub>t</sub> = <span class="m">w</span>(evento<sub>t</sub>) · ( 1 + <span class="m">β</span>·(<span class="m">s</span><sub>t</sub> − ½) ) &nbsp;,&nbsp; <span class="m">s</span><sub>t</sub> = score de risco do cliente, <span class="m">β</span> ≈ 0,4</div>
+
+    <div class="callout">
+      <div class="h"><span class="bpill">exemplo</span> Ponderação por risco, com três clientes</div>
+      <p>Abandono saudável (<span class="m">w</span>=+0,8) de um cliente de <strong>alto</strong> risco (<span class="m">s</span>=0,9): <span class="m">r</span> = 0,8·(1+0,4·0,4) = <strong>0,93</strong>. O mesmo abandono num cliente de <strong>risco médio</strong> (<span class="m">s</span>=0,5): <span class="m">r</span> = 0,8·(1+0,4·0) = <strong>0,80</strong> (sem ajuste, pois <span class="m">s</span>−½=0). No cliente de <strong>baixo</strong> risco (<span class="m">s</span>=0,2): <span class="m">r</span> = 0,8·(1+0,4·(−0,3)) = <strong>0,70</strong>. A diferença entre 0,93 e 0,70 (≈33%) é o que ensina o modelo a valorizar mais proteger quem realmente está em risco — evitando que ele aprenda a simplesmente bloquear todo mundo, o que inflaria abandono saudável artificialmente.</p>
+      <div class="barrow"><span class="lbl">Cliente alto risco</span><div class="track"><div class="fill" style="width:93%;background:#3f7d2e"></div></div><span class="val">0,93</span></div>
+      <div class="barrow"><span class="lbl">Cliente risco médio</span><div class="track"><div class="fill" style="width:80%;background:#3f7d2e"></div></div><span class="val">0,80</span></div>
+      <div class="barrow"><span class="lbl">Cliente baixo risco</span><div class="track"><div class="fill" style="width:70%;background:#3f7d2e"></div></div><span class="val">0,70</span></div>
+    </div>
+
+    <h3>Feedback tardio</h3>
+    <p>Golpe e contestação só são conhecidos dias depois. Estratégia recomendada em duas fases:</p>
+    <div class="eq a"><span class="m">r</span><sub>final</sub> = <span class="m">r</span><sub>imediato</sub> (abandono, refação) + <span class="m">γ</span> · <span class="m">r</span><sub>tardio</sub> (golpe, contestação) &nbsp;,&nbsp; <span class="m">γ</span> ≈ 0,8</div>
+    <p>Atualiza-se o modelo com o sinal imediato via <code>partial_fit</code> e, ao chegar o evento tardio, faz-se um segundo <code>partial_fit</code> de ajuste.</p>
+
+    <h2 id="s10">10. Do evento à recompensa — o pipeline</h2>
+    <div class="svgwrap">
+      <svg viewBox="0 0 900 140" xmlns="http://www.w3.org/2000/svg">
+        <g font-family="ui-sans-serif,sans-serif" font-size="11">
+          <rect x="10" y="40" width="140" height="50" rx="8" fill="#e3f1f3" stroke="#0e7c8b"/>
+          <text x="80" y="60" text-anchor="middle" fill="#0a5560">Alerta exibido</text>
+          <text x="80" y="76" text-anchor="middle" fill="#697587" font-size="9">variante escolhida</text>
+          <text x="158" y="70" fill="#697587">→</text>
+          <rect x="175" y="40" width="140" height="50" rx="8" fill="#fbf1dd" stroke="#c07d12"/>
+          <text x="245" y="60" text-anchor="middle" fill="#c07d12">Reação imediata</text>
+          <text x="245" y="76" text-anchor="middle" fill="#697587" font-size="9">abandono / refação</text>
+          <text x="323" y="70" fill="#697587">→</text>
+          <rect x="340" y="40" width="140" height="50" rx="8" fill="#efe9fb" stroke="#6b4fbf"/>
+          <text x="410" y="60" text-anchor="middle" fill="#6b4fbf">Evento tardio</text>
+          <text x="410" y="76" text-anchor="middle" fill="#697587" font-size="9">golpe / contestação, +dias</text>
+          <text x="488" y="70" fill="#697587">→</text>
+          <rect x="505" y="40" width="140" height="50" rx="8" fill="#fbe9ec" stroke="#c0405a"/>
+          <text x="575" y="60" text-anchor="middle" fill="#c0405a">Cálculo de r_t</text>
+          <text x="575" y="76" text-anchor="middle" fill="#697587" font-size="9">peso × ajuste de risco</text>
+          <text x="653" y="70" fill="#697587">→</text>
+          <rect x="670" y="40" width="200" height="50" rx="8" fill="#e6f4ee" stroke="#3f7d2e"/>
+          <text x="770" y="60" text-anchor="middle" fill="#3f7d2e">partial_fit no MAB</text>
+          <text x="770" y="76" text-anchor="middle" fill="#697587" font-size="9">2 chamadas: imediata + tardia</text>
+        </g>
+      </svg>
+      <div class="svgcap">Figura 10.1 — do clique do cliente até a atualização do modelo</div>
+    </div>
+
+    <div class="tag-part" style="margin-top:2.4rem">Exercícios de fixação — Parte II</div>
+    <h2 id="ex2" style="border-top:none;margin-top:.6rem;padding-top:0">Pergunte a si mesmo</h2>
+    <div class="qbox">
+      <div class="q">1. Se adicionarmos um quarto módulo com 3 variantes, quantos braços passam a existir na versão fatorada? E na versão conjunta?</div>
+      <details><summary>Ver resposta</summary><div class="a">Fatorada: 4+4+2+3 = 13 braços. Conjunta: 4×4×2×3 = 96 combinações. A vantagem da fatoração cresce ainda mais conforme se adicionam módulos.</div></details>
+    </div>
+    <div class="qbox">
+      <div class="q">2. Por que a recompensa de golpe confirmado (−1,0) tem peso maior em módulo que abandono saudável (+0,8)?</div>
+      <details><summary>Ver resposta</summary><div class="a">É uma escolha de produto: o custo de deixar um golpe acontecer é considerado mais grave do que o ganho de um abandono saudável — refletindo uma assimetria de risco real (perda financeira e de confiança do cliente vs. um pequeno atrito). Essa assimetria é ajustável e deve ser calibrada com a área de risco.</div></details>
+    </div>
+    <div class="qbox">
+      <div class="q">3. O que aconteceria se não houvesse a ponderação por score de risco (β=0) na função de recompensa?</div>
+      <details><summary>Ver resposta</summary><div class="a">Um abandono saudável valeria exatamente o mesmo (+0,8) para qualquer cliente, independente do risco real. O modelo perderia o incentivo de "focar a proteção" em quem mais precisa, e teria mais chance de aprender uma política que gera atrito igual para todo mundo — inclusive clientes de baixíssimo risco, para quem esse atrito é puro custo.</div></details>
+    </div>
+
+    <!-- ============ PART III ============ -->
+    <div class="tag-part">Parte III — A biblioteca MABWiser</div>
+
+    <h2 id="s11">11. Visão geral da MABWiser</h2>
+    <p>Biblioteca Python de código aberto da Fidelity Investments, com publicações acadêmicas (ICTAI 2019, IJAIT 2021). Interface no estilo scikit-learn (<code>fit</code>/<code>predict</code>), suporte a contexto paramétrico e não-paramétrico, serialização e simulação offline. Requer Python 3.8+.</p>
+    <div class="pre-label">Instalação</div>
+    <pre><code>pip install mabwiser</code></pre>
+    <p>Três classes centrais:</p>
+    <pre><code>from mabwiser.mab import MAB, LearningPolicy, NeighborhoodPolicy</code></pre>
+    <ul>
+      <li><code>MAB</code> — o objeto bandit (o "estimador", análogo a um <code>Estimator</code> do sklearn).</li>
+      <li><code>LearningPolicy</code> — <em>como</em> decide entre braços.</li>
+      <li><code>NeighborhoodPolicy</code> — <em>como</em> o contexto entra de forma não-paramétrica (opcional).</li>
+    </ul>
+    <p>Três modos de operação:</p>
+    <pre><code><span class="c"># 1. Context-free</span>
+mab = MAB(arms, LearningPolicy.UCB1(alpha=1.25))
+
+<span class="c"># 2. Contextual paramétrico</span>
+mab = MAB(arms, LearningPolicy.LinUCB(alpha=1.25))
+
+<span class="c"># 3. Contextual não-paramétrico</span>
+mab = MAB(arms, LearningPolicy.UCB1(1.25), NeighborhoodPolicy.Radius(radius=5))</code></pre>
+
+    <h2 id="s12">12. Learning policies — context-free</h2>
+    <ul>
+      <li><code>EpsilonGreedy(epsilon=0.1)</code> — melhor braço com prob. 1−ε; aleatório com prob. ε.</li>
+      <li><code>UCB1(alpha=1.0)</code> — limite superior de confiança; α maior explora mais.</li>
+      <li><code>ThompsonSampling(binarizer=None)</code> — posterior Beta por braço. <strong>Exige recompensa binária</strong> (ver Seção 16).</li>
+      <li><code>Softmax(tau=1)</code> — probabilidade proporcional à recompensa média; τ é a temperatura.</li>
+      <li><code>Popularity()</code>, <code>Random()</code> — baselines úteis para comparação.</li>
+    </ul>
+
+    <h2 id="s13">13. Learning policies — contextuais (aceitam recompensa contínua)</h2>
+    <p><strong>LinUCB</strong> — ridge regression por braço + bônus de confiança:</p>
+    <div class="eq"><span class="m">a</span><sub>t</sub> = <span class="op">argmax</span><sub>a</sub> ( ⟨<span class="m">x</span>, <span class="m">θ̂</span><sub>a</sub>⟩ + <span class="m">α</span> <span class="op">√</span><span class="rad"><span class="m">x</span><sup>⊤</sup><span class="m">A</span><sub>a</sub><sup>−1</sup><span class="m">x</span></span> )</div>
+    <p><strong>LinTS</strong> — amostra coeficientes de uma normal multivariada e age greedy. <strong>1ª escolha para o nosso caso</strong> (contextual + contínuo).</p>
+    <div class="eq v"><span class="m">θ̃</span><sub>a</sub> ∼ 𝒩( <span class="m">θ̂</span><sub>a</sub>, <span class="m">α</span><sup>2</sup> <span class="m">A</span><sub>a</sub><sup>−1</sup> ) &nbsp;,&nbsp; <span class="m">a</span><sub>t</sub> = <span class="op">argmax</span><sub>a</sub> ⟨<span class="m">x</span>, <span class="m">θ̃</span><sub>a</sub>⟩</div>
+    <p><strong>LinGreedy</strong> — versão contextual do ε-greedy: greedy sobre a regressão, com probabilidade ε de escolher braço aleatório.</p>
+
+    <table class="tbl">
+      <tr><th>Policy</th><th>Contexto</th><th>Recompensa contínua</th></tr>
+      <tr><td>EpsilonGreedy / UCB1 / Softmax</td><td>Não</td><td class="g">Sim ✓</td></tr>
+      <tr><td>ThompsonSampling (sem binarizer)</td><td>Não</td><td class="r">Não — só binária</td></tr>
+      <tr><td>LinUCB / LinTS / LinGreedy</td><td class="g">Sim ✓</td><td class="g">Sim ✓</td></tr>
+    </table>
+
+    <div class="callout">
+      <div class="h"><span class="bpill">ponte</span> LinUCB/LinTS na linguagem de propensão</div>
+      <p><span class="m">A</span><sub>a</sub> e <span class="m">b</span><sub>a</sub> são exatamente o que você calcularia para ajustar uma ridge regression de <span class="m">x</span> → <span class="m">r</span> usando <em>apenas as observações em que o braço a foi escolhido</em>. A diferença para propensão tradicional é dupla: (1) existe uma regressão por braço, em vez de uma só; e (2) a decisão soma um bônus de incerteza (LinUCB) ou amostra da distribuição de coeficientes (LinTS) — algo que uma predição de propensão pontual nunca faz.</p>
+    </div>
+
+    <h2 id="s14">14. Neighborhood policies</h2>
+    <p>Tornam uma learning policy context-free em contextual, particionando o espaço de contexto em vizinhanças e aplicando a policy dentro de cada uma:</p>
+    <ul>
+      <li><code>Radius(radius=r)</code> — usa todos os pontos históricos dentro de um raio r do contexto atual.</li>
+      <li><code>KNearest(k=k)</code> — usa os k vizinhos mais próximos.</li>
+      <li><code>Clusters(n_clusters=k)</code> — agrupa o histórico em k clusters (k-means) e usa o cluster do contexto atual.</li>
+      <li><code>TreeBandit(...)</code> — usa uma árvore de decisão para particionar o espaço.</li>
+    </ul>
+    <p>Útil quando a relação <span class="m">x</span> → <span class="m">r</span> não é bem aproximada por uma reta (não-linearidade forte) — o custo é exigir mais dados históricos por vizinhança para ter estimativas estáveis.</p>
+
+    <h2 id="s15">15. API completa</h2>
+    <table class="tbl">
+      <tr><th>Método</th><th>O que faz</th></tr>
+      <tr><td><code>fit(decisions, rewards, contexts)</code></td><td>Treino inicial em lote (ex.: dados históricos do A/B)</td></tr>
+      <tr><td><code>partial_fit(decisions, rewards, contexts)</code></td><td>Atualização incremental online, um ou poucos exemplos por vez</td></tr>
+      <tr><td><code>predict(contexts)</code></td><td>Retorna o braço escolhido pela política</td></tr>
+      <tr><td><code>predict_expectations(contexts)</code></td><td>Retorna a recompensa esperada por braço — usado para explicabilidade/auditoria</td></tr>
+      <tr><td><code>add_arm(arm)</code></td><td>Adiciona um braço novo em runtime (ex.: nova variante de header)</td></tr>
+      <tr><td><code>warm_start(arm_to_features, distance_quantile)</code></td><td>Inicializa um braço novo copiando conhecimento de braços similares</td></tr>
+    </table>
+    <pre><code><span class="c"># Exemplo mínimo, de ponta a ponta</span>
+from mabwiser.mab import MAB, LearningPolicy
+
+arms = ['h_atencao','h_urgente','h_emocional','h_estatistico']
+mab = MAB(arms, LearningPolicy.LinTS(alpha=0.5), seed=42)
+
+<span class="c"># treino inicial com histórico do A/B (warm start)</span>
+mab.fit(decisions=dec_hist, rewards=rew_hist, contexts=ctx_hist)
+
+<span class="c"># em produção: decidir para um cliente novo</span>
+variante = mab.predict([ctx_cliente])
+scores   = mab.predict_expectations([ctx_cliente])   <span class="c"># p/ auditoria</span>
+
+<span class="c"># depois de observar o desfecho:</span>
+mab.partial_fit(decisions=[variante], rewards=[recompensa], contexts=[ctx_cliente])</code></pre>
+
+    <h2 id="s16">16. Thompson Sampling e recompensa contínua — a armadilha</h2>
+    <p>Como visto na Seção 4, Thompson Sampling clássico mantém uma posterior <strong>Beta</strong> por braço, conjugada apenas para recompensa binária. Nosso reward é contínuo. Três caminhos:</p>
+    <ul>
+      <li><strong>A — LinTS/LinUCB/LinGreedy (recomendado):</strong> usam ridge regression, aceitam contínuo nativamente.</li>
+      <li><strong>B — Thompson + binarizer:</strong> função <code>b: 𝒳×ℝ→{0,1}</code> converte a recompensa. Perde magnitude (golpe −1,0 e contestação −0,7 viram ambos "0").</li>
+      <li><strong>C — UCB1/EpsilonGreedy + neighborhood:</strong> context-free que aceita contínuo, tornado contextual por vizinhança.</li>
+    </ul>
+    <pre><code><span class="c"># Caminho B (se insistir em Thompson):</span>
+def binarizer(arm, reward):
+    return 1 if reward > 0 else 0
+mab = MAB(arms, LearningPolicy.ThompsonSampling(binarizer=binarizer),
+          NeighborhoodPolicy.KNearest(k=10))</code></pre>
+    <table class="tbl">
+      <tr><th>Prioridade</th><th>Configuração</th><th>Justificativa</th></tr>
+      <tr class="hi"><td>1ª</td><td><code>LinTS(alpha=0.5)</code></td><td>Contextual + contínuo nativo + exploração Bayesiana</td></tr>
+      <tr><td>2ª</td><td><code>LinUCB(alpha=1.0)</code></td><td>Contínuo, exploração determinística (mais auditável)</td></tr>
+      <tr><td>3ª</td><td><code>UCB1 + KNearest(10)</code></td><td>Se a relação x→r for não-linear</td></tr>
+    </table>
+
+    <h2 id="s17">17. Simulação passo a passo, à mão</h2>
+    <p>Para consolidar a intuição, eis um exemplo minúsculo e totalmente rastreável de LinUCB com 1 feature de contexto e 2 braços, ao longo de 5 rodadas. Os números são simplificados (α=1, λ=1) para caber numa tabela — em produção, <span class="m">x</span> tem 4 dimensões e o cálculo é feito pela biblioteca, mas a lógica é idêntica.</p>
+    <div class="stepbar">
+      <span>1. observa x</span><span>2. calcula score por braço (estimativa + bônus)</span><span>3. escolhe o maior</span><span>4. observa r</span><span>5. atualiza A_a, b_a</span>
+    </div>
+    <table class="tbl">
+      <tr><th>Rodada</th><th>x (contexto)</th><th>Score A</th><th>Score B</th><th>Escolhido</th><th>r observado</th></tr>
+      <tr><td>1</td><td>0,8</td><td>1,00 (só bônus, sem dado)</td><td>1,00 (só bônus, sem dado)</td><td>A (empate, desempate arbitrário)</td><td>0,20</td></tr>
+      <tr><td>2</td><td>0,3</td><td>0,31</td><td>0,95 (ainda sem dado)</td><td>B</td><td>0,55</td></tr>
+      <tr><td>3</td><td>0,6</td><td>0,42</td><td>0,71</td><td>B</td><td>0,60</td></tr>
+      <tr><td>4</td><td>0,9</td><td>0,52</td><td>0,86</td><td>B</td><td>0,75</td></tr>
+      <tr class="hi"><td>5</td><td>0,2</td><td>0,60</td><td>0,44</td><td>A</td><td>0,15</td></tr>
+    </table>
+    <p>Repare como, mesmo sem nenhum dado no braço B nas rodadas 1–2, o bônus de incerteza é alto o suficiente para o modelo "arriscar" testá-lo — e como, a partir da rodada 3, o braço B já mostra estimativa forte o bastante para dominar mesmo com o bônus decrescente. Na rodada 5, o contexto (0,2, baixo) favorece o braço A porque a regressão aprendida para A tem inclinação diferente da de B — é justamente essa dependência do contexto que torna a decisão "contextual" e não apenas "o braço com maior média histórica".</p>
+
+    <h2 id="s18">18. O Simulator embutido</h2>
+    <p>A classe <code>Simulator</code> (em <code>mabwiser.simulator</code>) compara bandits e faz tuning offline <em>antes</em> de produção — ouro para validar a escolha nos seus dados.</p>
+    <pre><code>from mabwiser.simulator import Simulator
+
+bandits = [
+    ('LinTS_0.25', MAB(arms, LearningPolicy.LinTS(alpha=0.25))),
+    ('LinTS_0.5',  MAB(arms, LearningPolicy.LinTS(alpha=0.5))),
+    ('LinUCB_1.0', MAB(arms, LearningPolicy.LinUCB(alpha=1.0))),
+    ('UCB_KNN10',  MAB(arms, LearningPolicy.UCB1(1.0),
+                       NeighborhoodPolicy.KNearest(k=10))),
+]
+sim = Simulator(bandits, decisions, rewards, contexts,
+                scaler=StandardScaler(), test_size=0.5,
+                is_ordered=True,   <span class="c"># respeita ordem temporal — sem vazamento</span>
+                batch_size=10, seed=123456)
+sim.run()</code></pre>
+    <p>Use <code>is_ordered=True</code> com os dados do A/B ordenados cronologicamente: simula fielmente o aprendizado online, sem usar informação do futuro.</p>
+
+    <div class="tag-part" style="margin-top:2.4rem">Exercícios de fixação — Parte III</div>
+    <h2 id="ex3" style="border-top:none;margin-top:.6rem;padding-top:0">Pergunte a si mesmo</h2>
+    <div class="qbox">
+      <div class="q">1. Você tem recompensa contínua e quer usar ThompsonSampling porque a equipe já conhece bem esse algoritmo. Isso é possível na MABWiser?</div>
+      <details><summary>Ver resposta</summary><div class="a">Só com um binarizer que converte a recompensa contínua em 0/1, o que descarta magnitude (golpe e contestação virariam o mesmo "0", por exemplo). A alternativa recomendada é LinTS, que é "Thompson Sampling" no sentido Bayesiano (posterior sampling), mas com verossimilhança Gaussiana em vez de Beta — aceitando contínuo nativamente.</div></details>
+    </div>
+    <div class="qbox">
+      <div class="q">2. Qual a diferença prática entre chamar fit() e partial_fit()?</div>
+      <details><summary>Ver resposta</summary><div class="a">fit() (re)treina o modelo do zero com o lote completo passado — usado tipicamente uma vez, no warm start com dados históricos do A/B. partial_fit() atualiza incrementalmente o modelo já existente com novas observações, sem descartar o que já foi aprendido — usado continuamente em produção, a cada novo desfecho observado.</div></details>
+    </div>
+    <div class="qbox">
+      <div class="q">3. Por que usar is_ordered=True no Simulator ao validar com dados do A/B?</div>
+      <details><summary>Ver resposta</summary><div class="a">Porque preserva a ordem cronológica real das decisões, simulando fielmente como o bandit teria aprendido online — sem "ver o futuro". Sem essa opção, o simulador poderia embaralhar os dados e o resultado ficaria otimista de forma artificial (vazamento temporal).</div></details>
+    </div>
+
+    <!-- ============ PART IV ============ -->
+    <div class="tag-part">Parte IV — Implementação e produção</div>
+
+    <h2 id="s19">19. Implementação para o cenário Pix</h2>
+    <div class="pre-label">MABManager — orquestrador (LinTS por módulo)</div>
+    <pre><code>from mabwiser.mab import MAB, LearningPolicy
+from sklearn.preprocessing import StandardScaler
+import pickle
+
+class MABManager:
+    MODULOS = {
+        'header': ['h_atencao','h_urgente','h_emocional','h_estatistico'],
+        'body':   ['b_curto','b_exemplo','b_checklist','b_dados'],
+        'botoes': ['btn_sem_checkbox','btn_com_checkbox'],
+    }
+    def __init__(self, alpha=0.5):
+        self.mabs, self.scalers = {}, {}
+        for m, arms in self.MODULOS.items():
+            self.mabs[m]    = MAB(arms, LearningPolicy.LinTS(alpha=alpha, l2_lambda=1.0), seed=42)
+            self.scalers[m] = StandardScaler()
+
+    def treinar_inicial(self, m, dec, rew, ctx):        <span class="c"># warm start com A/B</span>
+        X = self.scalers[m].fit_transform(ctx)
+        self.mabs[m].fit(decisions=dec, rewards=rew, contexts=X)
+
+    def selecionar(self, ctx):
+        out = {}
+        for m, mab in self.mabs.items():
+            try:
+                X = self.scalers[m].transform([ctx])
+                out[m] = mab.predict(X)
+            except Exception:
+                out[m] = self.MODULOS[m][0]              <span class="c"># fallback</span>
+        return out
+
+    def explicar(self, m, ctx):                          <span class="c"># auditoria</span>
+        return self.mabs[m].predict_expectations(self.scalers[m].transform([ctx]))
+
+    def registrar(self, m, variante, recompensa, ctx):
+        X = self.scalers[m].transform([ctx])
+        self.mabs[m].partial_fit(decisions=[variante], rewards=[recompensa], contexts=X)</code></pre>
+
+    <div class="pre-label">Contexto do MVP (mensal, por cliente)</div>
+    <pre><code>from dataclasses import dataclass
+
+@dataclass
+class ContextoCliente:
+    faixa_etaria: int          <span class="c"># 1..4</span>
+    score_risco_cliente: float <span class="c"># 0..1</span>
+    volume_pix_mensal: float   <span class="c"># R$/mês</span>
+    recorrencia_uso: float     <span class="c"># nº médio de Pix/mês, normalizado</span>
+    <span class="c"># SEM features transacionais no MVP (valor, conta destino, horário) → fase futura</span>
+
+def vetor(ctx: ContextoCliente):
+    return [ctx.faixa_etaria, ctx.score_risco_cliente,
+            ctx.volume_pix_mensal, ctx.recorrencia_uso]   <span class="c"># StandardScaler normaliza</span></code></pre>
+
+    <h2 id="s20">20. Integração com o teste A/B</h2>
+    <p>O A/B do checkbox <strong>não é substituído</strong> — ele alimenta o MAB como warm start. O A/B estima o efeito <em>médio</em>; o MAB contextual descobre <em>para quem e quando</em> cada variante funciona.</p>
+    <div class="grid3">
+      <div class="card"><h4>A/B (hoje)</h4><p>Efeito médio do checkbox: "melhor ou pior na média".</p></div>
+      <div class="card"><h4>MAB Fase 1</h4><p>Warm start com os dados do A/B; refina no agregado.</p></div>
+      <div class="card"><h4>MAB Contextual</h4><p>Aprende que o checkbox ajuda idosos com baixo histórico, mas gera atrito em jovens de uso intenso.</p></div>
+    </div>
+    <pre><code>manager.treinar_inicial(
+    m='botoes',
+    dec=ab_df['variante'].tolist(),
+    rew=ab_df['recompensa'].tolist(),          <span class="c"># recompensa contínua</span>
+    ctx=ab_df[['faixa_etaria','score_risco',
+               'volume_pix_mensal','recorrencia']].values)</code></pre>
+    <div class="callout warn">
+      <div class="h">⚠ Cuidado com o prior</div>
+      <p>O prior do A/B é <strong>marginal</strong> (sem contexto). Use-o como inicialização suave (regularização), não como verdade — senão atrasa a descoberta contextual.</p>
+    </div>
+
+    <div class="callout">
+      <div class="h"><span class="bpill">exemplo</span> Quanto o warm start economiza</div>
+      <p>Se, do zero, o módulo de botões precisa de ~2.000 decisões para reduzir a incerteza a um nível aceitável, e o A/B já rodou 8.000 decisões históricas (mesmo sem contexto), o warm start pode reduzir esse número para algo como ~1.200 decisões pós-lançamento — uma economia da ordem de 40%, porque o modelo já "sabe" a direção média do efeito e só precisa refinar por segmento. Esse número é ilustrativo; o ganho real deve ser medido no Simulator com os dados reais do A/B.</p>
+    </div>
+
+    <h2 id="s21">21. Exploração × exploitação em produção</h2>
+    <p>Explorar tem custo (mostrar variante possivelmente pior); não explorar tem custo maior (nunca melhorar, nem detectar drift). Em LinTS/LinUCB a exploração <strong>decai naturalmente</strong> conforme a incerteza (covariância) diminui — sem agendar ε manualmente. Mantenha α &gt; 0 para aprendizado contínuo.</p>
+    <div class="callout">
+      <div class="h">Custo de regret — enquadramento executivo</div>
+      <p>100 mil alertas/dia, taxa de golpe 2% → 2.000 vítimas/dia. Se o ótimo reduz para 1,5% → 1.500/dia, são <strong>500 vítimas/dia</strong> de diferença. Convergência lenta = vítimas adicionais durante o aprendizado — daí a importância do warm start.</p>
+    </div>
+
+    <h2 id="s22">22. Não-estacionariedade e drift</h2>
+    <p>Padrões de golpe mudam — a política ótima deriva ao longo do tempo. Mecanismos para não "congelar":</p>
+    <ul>
+      <li><strong>Esquecimento (discounted ridge):</strong> <span class="m">A</span><sub>a</sub> ← <span class="m">γ</span>·<span class="m">A</span><sub>a</sub> + <span class="m">x</span><span class="m">x</span><sup>⊤</sup>, com <span class="m">γ</span>&lt;1 — dá menos peso a observações antigas.</li>
+      <li><strong>Piso de exploração:</strong> manter α (ou ε<sub>mín</sub>) &gt; 0 permanentemente, para continuar testando mesmo depois de convergido.</li>
+      <li><strong>Detecção de drift:</strong> KS-test ou PSI (population stability index) nas distribuições marginais das features de contexto, comparando janelas recentes com históricas.</li>
+    </ul>
+    <div class="callout">
+      <div class="h"><span class="bpill">ponte</span> Isso é o mesmo problema de "model decay" em modelos de propensão</div>
+      <p>Se você já monitora PSI para detectar quando um modelo de propensão precisa de retreino, é o mesmo instrumento aqui — só que aplicado ao contexto do bandit, e com a resposta operacional diferente: em vez de agendar um retreino batch, o bandit já reage continuamente via <code>partial_fit</code>, e o desconto <span class="m">γ</span> ajusta o quanto ele "esquece" o passado.</p>
+    </div>
+
+    <h2 id="s23">23. Pipeline de produção</h2>
+    <pre><code>App do cliente
+     │  requisição de alerta
+     ▼
+ALERTA SERVICE (API)          latência-alvo &lt; 50ms
+  1. coleta contexto mensal do cliente
+  2. MABManager.selecionar(ctx)
+  3. loga decisão + PROPENSÃO p(a|x)     ← requisito p/ avaliação off-policy
+  4. retorna {header, body, botoes}
+     │
+[cliente interage; desfecho observado]
+     ▼
+REWARD SERVICE (Kafka/SQS)
+  - calcula recompensa contínua
+  - MABManager.registrar(...)   (fila serializada por módulo)
+     ▼
+MODEL STORE (S3/Redis) — serialização periódica + versionamento/rollback</code></pre>
+    <div class="callout crit">
+      <div class="h">Concorrência: <code>partial_fit</code> muta o objeto</div>
+      <p>Serialize as atualizações de recompensa por uma fila (um worker por módulo). Predições (read-only após carga) podem ser distribuídas livremente.</p>
+    </div>
+
+    <h2 id="s24">24. Métricas, monitoramento</h2>
+    <table class="tbl">
+      <tr><th>Métrica</th><th>Alerta se</th></tr>
+      <tr><td>Distribuição de braços</td><td>Um braço &gt; 90% (possível colapso)</td></tr>
+      <tr><td>Recompensa média móvel</td><td>Queda &gt; 15% em 48h</td></tr>
+      <tr><td>Cobertura de braços <span class="m">N</span><sub>a</sub></td><td>Variante com n &lt; 100 após 30 dias</td></tr>
+      <tr><td>Drift de contexto (KS/PSI)</td><td>p &lt; 0,05 persistente</td></tr>
+    </table>
+
+    <h2 id="s25">25. Avaliação off-policy (OPE)</h2>
+    <p>Coleta adaptativa enviesa estimadores clássicos. Para comparar políticas, use logs com a propensão registrada:</p>
+    <div class="eq"><span class="m">V̂</span><sub>IPS</sub>(<span class="m">π</span>) = <span class="frac"><span class="n">1</span><span class="d"><span class="m">n</span></span></span> <span class="op">∑</span><sub>i</sub> <span class="frac"><span class="n">𝟙[<span class="m">a</span><sub>i</sub>=<span class="m">π</span>(<span class="m">x</span><sub>i</sub>)]</span><span class="d"><span class="m">p</span>(<span class="m">a</span><sub>i</sub>|<span class="m">x</span><sub>i</sub>)</span></span> <span class="m">r</span><sub>i</sub></div>
+
+    <div class="callout">
+      <div class="h"><span class="bpill">ponte</span> IPS é o IPW que você já usa em causal inference</div>
+      <p>Se você já aplicou <em>Inverse Propensity Weighting</em> para estimar o efeito de um tratamento em dados observacionais, o estimador acima é literalmente o mesmo objeto: pondera cada observação pelo inverso da probabilidade de ela ter recebido a ação que de fato recebeu (aqui, a propensão de <em>logging</em> do bandit, não de um tratamento médico ou de marketing). A condição de identificação também é a mesma: <strong>overlap</strong> — toda ação precisa ter probabilidade positiva de ser escolhida em qualquer contexto (<span class="m">p</span>(a|x) &gt; 0), ou o estimador não consegue "ver" essa ação nunca.</p>
+    </div>
+
+    <p>Não-viesado sob <em>overlap</em> (<span class="m">p</span>&gt;0). Menor variância com o estimador <strong>Doubly Robust</strong>, que combina IPS com um modelo de recompensa <span class="m">r̂</span>:</p>
+    <div class="eq v"><span class="m">V̂</span><sub>DR</sub> = <span class="frac"><span class="n">1</span><span class="d"><span class="m">n</span></span></span> <span class="op">∑</span><sub>i</sub> ( <span class="m">r̂</span>(<span class="m">x</span><sub>i</sub>,<span class="m">π</span>(<span class="m">x</span><sub>i</sub>)) + <span class="frac"><span class="n">𝟙[<span class="m">a</span><sub>i</sub>=<span class="m">π</span>(<span class="m">x</span><sub>i</sub>)]</span><span class="d"><span class="m">p</span>(<span class="m">a</span><sub>i</sub>|<span class="m">x</span><sub>i</sub>)</span></span> ( <span class="m">r</span><sub>i</sub> − <span class="m">r̂</span>(<span class="m">x</span><sub>i</sub>,<span class="m">a</span><sub>i</sub>) ) )</div>
+    <p>Consistente se o modelo de propensão <em>ou</em> o de recompensa estiver correto — a mesma propriedade de robustez dupla que estimadores causais duplamente robustos têm no seu uso tradicional. Mantenha 10–15% dos clientes num <strong>grupo de controle</strong> estático — a única medida não-confundida do uplift real.</p>
+
+    <div class="callout">
+      <div class="h"><span class="bpill">exemplo</span> Por que a propensão pequena explode a variância do IPS</div>
+      <p>Se um braço só é escolhido com probabilidade 0,02 num certo contexto, e ele acontece de ser escolhido uma vez com recompensa 1,0, essa observação sozinha contribui 1,0/0,02 = <strong>50</strong> para a soma do IPS — um valor muito maior que a recompensa "real" observada. Isso é o motivo pelo qual variância explode quando há propensões muito pequenas, e por que o Doubly Robust (que reduz a dependência apenas da razão 1/p) costuma ser preferido em produção.</p>
+    </div>
+
+    <div class="tag-part" style="margin-top:2.4rem">Exercícios de fixação — Parte IV</div>
+    <h2 id="ex4" style="border-top:none;margin-top:.6rem;padding-top:0">Pergunte a si mesmo</h2>
+    <div class="qbox">
+      <div class="q">1. Por que é obrigatório logar p(a|x) em toda decisão, mesmo que pareça um detalhe operacional secundário?</div>
+      <details><summary>Ver resposta</summary><div class="a">Porque, sem essa informação, nenhuma avaliação off-policy honesta é possível depois — não há como reconstruir a propensão de logging retroativamente. É um requisito de projeto, não um "nice to have": sem ela, qualquer auditoria ou comparação futura de políticas fica comprometida.</div></details>
+    </div>
+    <div class="qbox">
+      <div class="q">2. O grupo de controle estático (10–15% na tela antiga) ainda é necessário mesmo com avaliação off-policy disponível?</div>
+      <details><summary>Ver resposta</summary><div class="a">Sim — IPS e DR corrigem viés estatisticamente, mas dependem de premissas (overlap, modelo de recompensa correto) que podem falhar de formas sutis. O grupo de controle é a única medida do uplift real, não-confundida por nenhuma dessas premissas, e serve como checagem de sanidade para os estimadores off-policy.</div></details>
+    </div>
+    <div class="qbox">
+      <div class="q">3. Um braço nunca é escolhido para um certo perfil de cliente (p(a|x)=0 nesse contexto). O que isso quebra?</div>
+      <details><summary>Ver resposta</summary><div class="a">Quebra a condição de overlap — o IPS (e o DR) não conseguem estimar o valor de uma política que escolheria esse braço para aquele contexto, porque não existe nenhuma observação para "corrigir" via ponderação. Na prática, é preciso garantir um piso mínimo de exploração (α&gt;0) para que nenhuma combinação braço×contexto tenha propensão zero.</div></details>
+    </div>
+
+    <!-- ============ PART V ============ -->
+    <div class="tag-part">Parte V — Estudo e referência</div>
+
+    <h2 id="s26">26. Estudo de caso completo, ponta a ponta</h2>
+    <p>Amarrando tudo: um cliente de 61 anos, risco médio-alto (<span class="m">s</span>=0,7), volume mensal de Pix moderado e baixa recorrência, abre o app para uma transferência de valor incomum.</p>
+    <ol>
+      <li><strong>Contexto</strong> é montado: <span class="m">x</span> = (faixa_etária=3, score_risco=0,7, volume_mensal=1200, recorrência=0,3), normalizado pelo <code>StandardScaler</code> de cada módulo.</li>
+      <li><strong>Decisão</strong>: <code>MABManager.selecionar(x)</code> chama os três MABs. LinTS amostra: Header → "h_emocional", Body → "b_exemplo", Botões → "btn_com_checkbox". A propensão de cada escolha é logada.</li>
+      <li><strong>Exibição</strong>: a tela composta é montada a partir dos três módulos escolhidos.</li>
+      <li><strong>Reação imediata</strong>: o cliente marca o checkbox, lê o exemplo, e cancela a transação — <code>HEALTHY_ABANDON</code>.</li>
+      <li><strong>Recompensa imediata</strong>: <span class="m">r</span> = 0,8·(1+0,4·(0,7−0,5)) = 0,8·1,08 = <strong>0,864</strong>. <code>partial_fit</code> roda nos três MABs.</li>
+      <li><strong>Sem evento tardio</strong> (o cliente não voltou a tentar, não houve contestação) — a recompensa final permanece 0,864.</li>
+      <li><strong>Monitoramento</strong>: esse evento contribui para a recompensa média móvel e para a cobertura do braço "btn_com_checkbox" nesse segmento de contexto.</li>
+      <li><strong>Auditoria</strong>, se solicitada: <code>predict_expectations</code> mostra que, para esse contexto, "btn_com_checkbox" tinha recompensa esperada mais alta que "btn_sem_checkbox" — justificando a decisão perante compliance.</li>
+    </ol>
+
+    <h2 id="s27">27. Checklist de implementação</h2>
+    <ul class="checklist">
+      <li>Contexto mensal do cliente disponível em baixa latência (&lt; 50ms) no momento da decisão</li>
+      <li>Um <code>MAB</code> por módulo configurado com <code>LinTS</code> (ou <code>LinUCB</code> como alternativa auditável)</li>
+      <li><code>StandardScaler</code> serializado junto de cada modelo, não recalculado em produção</li>
+      <li>Warm start com dados do A/B existente (decisão, recompensa contínua, contexto histórico se disponível)</li>
+      <li>Propensão <span class="m">p</span>(a|x) logada em toda decisão, sem exceção</li>
+      <li>Fila serializada por módulo para as chamadas de <code>partial_fit</code> (evitar condição de corrida)</li>
+      <li>Grupo de controle estático de 10–15% mantido na tela/lógica antiga</li>
+      <li>Guardrails determinísticos fora do bandit para score de risco extremo</li>
+      <li>Dashboards de: distribuição de braços, recompensa média móvel, cobertura por braço, drift de contexto (KS/PSI)</li>
+      <li>Validação prévia no <code>Simulator</code> com <code>is_ordered=True</code> comparando LinTS × LinUCB × baseline</li>
+      <li>Plano de rollback do model store (S3/Redis) versionado</li>
+    </ul>
+
+    <h2 id="s28">28. Gabarito geral — perguntas de revisão adicionais</h2>
+    <div class="qbox">
+      <div class="q">Explique, em uma frase, a diferença entre regret linear, logarítmico e Õ(d√T).</div>
+      <details><summary>Ver resposta</summary><div class="a">Linear (Θ(T)) é o custo de nunca aprender (alocação fixa); logarítmico (O(ln T)) é o custo de um bandit sem contexto convergindo para o braço ótimo; Õ(d√T) é o custo de um bandit contextual linear, que cresce com a dimensão do contexto porque há mais parâmetros a aprender.</div></details>
+    </div>
+    <div class="qbox">
+      <div class="q">Cite dois motivos para preferir LinTS a LinUCB, e um motivo para preferir o contrário.</div>
+      <details><summary>Ver resposta</summary><div class="a">A favor de LinTS: aceita recompensa contínua com verossimilhança Gaussiana nativa e sua exploração decai suavemente com a incerteza posterior, sem precisar de agendamento manual. A favor de LinUCB: a decisão é determinística dado o estado do modelo (mesma entrada sempre gera a mesma saída), o que facilita auditoria e reprodutibilidade exata.</div></details>
+    </div>
+    <div class="qbox">
+      <div class="q">Por que a fatoração em um MAB por módulo é uma simplificação, e como testar se ela é aceitável?</div>
+      <details><summary>Ver resposta</summary><div class="a">Porque assume que a recompensa se decompõe aditivamente entre módulos, ignorando possíveis interações (ex.: um header urgente combinado com um corpo checklist pode funcionar melhor ou pior do que a soma dos efeitos individuais sugeriria). Testa-se estimando um termo de interação g(x,a^H,a^B) nos dados coletados e checando se ele é estatisticamente e praticamente relevante.</div></details>
+    </div>
+
+    <h2 id="s29">29. FAQ — Negócio</h2>
+    <h4>O regulador vai aceitar?</h4>
+    <p>Sim. O alerta <strong>sempre</strong> é exibido — o MAB decide o formato, não <em>se</em> exibe. Todas as variantes cumprem o mínimo regulatório; cada decisão é logada (auditável), e <code>predict_expectations</code> explica o porquê.</p>
+    <h4>Quanto tempo para resultados?</h4>
+    <p>Com 100k decisões/dia por módulo: 1–2 semanas para sinais agregados, 4–6 semanas para distinção entre segmentos, 3+ meses para convergência robusta. Warm start reduz ~40%.</p>
+    <h4>Pode mostrar alerta fraco para cliente em risco?</h4>
+    <p>Guardrail determinístico: score de risco muito alto → sempre a versão mais forte, fora do bandit. O MAB opera só na faixa intermediária.</p>
+    <h4>O cliente percebe a mudança?</h4>
+    <p>Não — consistência dentro da sessão; variação só entre sessões. A diversidade dificulta que golpistas "treinem" vítimas.</p>
+
+    <h2 id="s30">30. FAQ — Técnico</h2>
+    <h4>Por que MABWiser?</h4>
+    <p>Interface scikit-learn, feita para bandits, contexto paramétrico e não-paramétrico, e Simulator para tuning offline. Vowpal Wabbit escala mais mas é mais complexo; Ray RLlib é RL completo (overkill).</p>
+    <h4>Thompson com recompensa contínua?</h4>
+    <p>Use LinTS/LinUCB (contínuo nativo) ou um binarizer no TS (perde magnitude). Ver Seção 16.</p>
+    <h4>A independência entre módulos é realista?</h4>
+    <p>É simplificação. Teste estimando o termo de interação <span class="m">g</span>(<span class="m">x</span>,<span class="m">a</span><sup>H</sup>,<span class="m">a</span><sup>B</sup>) e verificando <span class="m">H</span><sub>0</sub>: <span class="m">g</span>=0. Se relevante → bandit fatorado/hierárquico (fase 2).</p>
+    <h4>Preciso escalar features?</h4>
+    <p>Para policies lineares, sim — <code>StandardScaler</code> serializado junto do modelo, ou <code>scale=True</code> na policy.</p>
+    <h4>Reprodutibilidade?</h4>
+    <p><code>seed</code> no construtor. LinTS usa Cholesky (determinístico dado o seed); por isso α, λ &gt; 0.</p>
+
+    <h2 id="s31">31. Glossário</h2>
+    <table class="tbl">
+      <tr><th>Termo</th><th>Definição</th></tr>
+      <tr><td>Braço (arm)</td><td>Cada variante que o MAB pode escolher</td></tr>
+      <tr><td>Regret</td><td>Perda acumulada vs. o braço ótimo</td></tr>
+      <tr><td>Bandit feedback</td><td>Só se observa a recompensa da ação tomada</td></tr>
+      <tr><td>LinTS / LinUCB</td><td>Bandits contextuais paramétricos (recompensa contínua)</td></tr>
+      <tr><td>Binarizer</td><td>Função que converte recompensa contínua em binária p/ Thompson</td></tr>
+      <tr><td>Warm start</td><td>Inicializar o modelo com conhecimento prévio (ex.: A/B)</td></tr>
+      <tr><td>partial_fit</td><td>Atualização online incremental</td></tr>
+      <tr><td>Propensão <span class="m">p</span>(a|x)</td><td>Prob. da política de logging escolher a ação — necessária p/ OPE</td></tr>
+      <tr><td>IPS / DR</td><td>Estimadores off-policy (Inverse Propensity / Doubly Robust)</td></tr>
+      <tr><td>Concept drift</td><td>Mudança da distribuição dos dados no tempo</td></tr>
+      <tr><td>Overlap</td><td>Toda ação tem probabilidade positiva de ser escolhida, para qualquer contexto</td></tr>
+      <tr><td>Fatoração de ações</td><td>Dividir um espaço de ações combinatório em bandits independentes menores</td></tr>
+    </table>
+
+    <h2 id="s32">32. Referências</h2>
+    <ul>
+      <li>Lattimore &amp; Szepesvári (2020). <em>Bandit Algorithms</em>. Cambridge University Press.</li>
+      <li>Auer (2002). Finite-time Analysis of the Multiarmed Bandit Problem (UCB1).</li>
+      <li>Li et al. (2010). A Contextual-Bandit Approach to Personalized News (LinUCB). WWW.</li>
+      <li>Abbasi-Yadkori et al. (2011). Improved Algorithms for Linear Stochastic Bandits. NIPS.</li>
+      <li>Agrawal &amp; Goyal (2013). Thompson Sampling for Contextual Bandits with Linear Payoffs. ICML.</li>
+      <li>Chapelle &amp; Li (2011). An Empirical Evaluation of Thompson Sampling. NIPS.</li>
+      <li>Dudík, Langford &amp; Li (2011). Doubly Robust Policy Evaluation and Learning. ICML.</li>
+      <li>Strong, Kleynhans &amp; Kadioglu (2021). MABWiser: Parallelizable Contextual MAB. IJAIT.</li>
+      <li>Documentação MABWiser: fidelity.github.io/mabwiser</li>
+    </ul>
+
+    <div class="footer">
+      Apostila Técnica · MAB Contextual para Alertas Pix · v2.0 — edição estendida com exemplos, diagramas e exercícios · Material interno.
+      <a class="backtop" href="#top">↑ Voltar ao topo</a> · <a class="backtop" href="index.html">Central de materiais</a>
+    </div>
+  </main>
+</div>
+</body>
+</html>
