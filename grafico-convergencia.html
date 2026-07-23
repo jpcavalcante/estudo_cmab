@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Convergência e autocorreção do MAB — Simulação</title>
+<link rel="stylesheet" href="assets/style.css">
+<style>
+  .simwrap{max-width:980px;margin:0 auto;padding:2.2rem clamp(1rem,4vw,2.5rem) 4rem}
+  .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin:1.2rem 0}
+  .kpi{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:.85rem 1rem}
+  .kpi .l{font-size:.8rem;color:var(--mut)}
+  .kpi .v{font-size:1.5rem;font-weight:650;color:var(--navy);font-variant-numeric:tabular-nums}
+  .kpi .v.state{font-size:1.02rem;padding-top:.35rem}
+  .btns{display:flex;flex-wrap:wrap;gap:10px;margin:1rem 0 1.1rem}
+  button{font:inherit;font-size:.9rem;padding:.55rem 1rem;border-radius:9px;border:1px solid var(--line-2);
+    background:var(--paper);color:var(--ink);cursor:pointer;transition:.15s}
+  button:hover{background:#f0ede5}
+  button:active{transform:scale(.98)}
+  button.danger{border-color:#e0a2ae;color:var(--rose);font-weight:600}
+  button.danger:hover{background:var(--rose-bg)}
+  .legend{display:flex;flex-wrap:wrap;gap:16px;font-size:.8rem;color:var(--ink-2);margin-bottom:8px}
+  .legend .sw{display:inline-block;width:12px;height:12px;border-radius:3px;vertical-align:-2px;margin-right:5px}
+  .legend .ln{display:inline-block;width:16px;border-top:2.5px dashed;vertical-align:3px;margin-right:5px}
+  .chartbox{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:14px}
+  canvas{width:100%;display:block}
+  .note{font-size:.82rem;color:var(--mut);margin-top:.6rem}
+  .explainer{margin-top:2rem}
+  .explainer .card{margin-bottom:1rem}
+</style>
+</head>
+<body>
+<div class="simwrap">
+  <a class="home" style="display:inline-flex;gap:.4rem;font-size:.85rem;color:var(--cyan-ink);text-decoration:none;font-weight:600" href="index.html">← Central de materiais</a>
+  <div class="tag-part" style="margin-top:1rem">Simulação interativa · Segurança do algoritmo</div>
+  <h1 style="font-family:var(--serif);font-weight:600;color:var(--navy);font-size:clamp(1.7rem,4vw,2.3rem);margin:.3rem 0">Convergência e autocorreção do MAB</h1>
+  <p class="subtitle" style="margin-bottom:0">Quando os golpistas mudam de tática, a recompensa cai — e a queda é o próprio gatilho: a exploração reacende e o sistema reconverge para uma solução eficaz. O modelo estático cai junto… e fica no chão até alguém retreinar.</p>
+
+  <div class="kpis">
+    <div class="kpi"><div class="l">Recompensa média · MAB</div><div class="v" id="kpiMab">—</div></div>
+    <div class="kpi"><div class="l">Recompensa média · estático</div><div class="v" id="kpiStatic">—</div></div>
+    <div class="kpi"><div class="l">Mudanças de tática</div><div class="v" id="kpiDrifts">0</div></div>
+    <div class="kpi"><div class="l">Estado do sistema</div><div class="v state" id="kpiState">aprendendo</div></div>
+  </div>
+
+  <div class="btns">
+    <button class="danger" id="btnDrift">⚡ Golpistas mudam de tática</button>
+    <button id="btnPause">⏸ Pausar</button>
+    <button id="btnReset">↺ Reiniciar</button>
+  </div>
+
+  <div class="legend">
+    <span><span class="sw" style="background:#2a78d6"></span>MAB adaptativo</span>
+    <span><span class="ln" style="border-color:#898781"></span>Modelo estático</span>
+    <span><span class="ln" style="border-color:#eda100;border-top-style:dotted"></span>Intensidade de exploração</span>
+    <span><span class="ln" style="border-color:#c0405a;border-top-style:solid;width:2px;border-top-width:12px;transform:rotate(90deg);margin-right:9px"></span>mudança de tática</span>
+  </div>
+
+  <div class="chartbox">
+    <canvas id="cv" height="360" role="img" aria-label="Gráfico de linha: recompensa média do MAB ao longo do tempo, com quedas nas mudanças de tática e reconvergência automática; o modelo estático permanece degradado."></canvas>
+  </div>
+  <p class="note">Simulação ilustrativa (não é projeção). A linha pontilhada âmbar mostra a exploração reacendendo automaticamente após cada queda — é o mecanismo de autocorreção.</p>
+
+  <div class="explainer">
+    <h2 style="font-family:var(--serif);color:var(--navy);font-size:1.35rem;margin-bottom:.8rem">Como ler a simulação — em três atos</h2>
+    <div class="card"><h4>Ato 1 · Convergência</h4><p>O sistema começa sem saber nada: recompensa baixa, exploração no máximo. A cada interação observada, a recompensa sobe e a exploração <strong>decai sozinha</strong> — o sistema para de "gastar" experimentação quando já tem confiança.</p></div>
+    <div class="card"><h4>Ato 2 · O golpe muda (aperte o botão vermelho)</h4><p>A tática nova fura o alerta atual e a recompensa despenca. Repare: a exploração <strong>reacende automaticamente</strong>. A queda de desempenho é o próprio gatilho — a incerteza volta a crescer e o sistema volta a testar variantes.</p></div>
+    <div class="card"><h4>Ato 3 · A comparação que fecha o argumento</h4><p>O MAB se recupera em poucas dezenas de interações. O modelo estático cai junto e <strong>fica degradado até alguém retreinar manualmente</strong>. Aperte o botão várias vezes: cada mudança acumula dano no estático, enquanto o MAB volta.</p></div>
+    <div class="callout ok" style="margin-top:1.2rem">
+      <div class="h">✓ A frase-síntese</div>
+      <p>"A segurança do algoritmo não é ele nunca errar — é ele <strong>perceber que errou e se corrigir sozinho</strong>, enquanto o modelo tradicional erra em silêncio até o próximo retreino."</p>
+    </div>
+    <div class="callout warn">
+      <div class="h">⚠ E durante o vale, quem protege o cliente?</div>
+      <p>Os guardrails: cliente de risco muito alto <strong>nunca entra no bandit</strong> — recebe sempre a versão máxima do alerta, por regra determinística. O vale só existe na faixa intermediária; o piso de exploração e o monitoramento de queda (&gt;15% em 48h dispara alerta) limitam a profundidade.</p>
+    </div>
+  </div>
+
+  <div class="footer">Simulação · MAB Pix · material interno — <a class="backtop" href="index.html">Central de materiais</a></div>
+</div>
+
+<script>
+(function(){
+"use strict";
+var cv=document.getElementById('cv'), ctx=cv.getContext('2d');
+var MAX=170, t=0, running=true;
+var mabTarget=0.75, mabVal=0.12, statVal=0.68, statTarget=0.68, expl=1.0, sinceDrift=999, drifts=0;
+var M=[], S=[], E=[], X=[], marks=[];
+
+var C={mab:'#2a78d6', mabFill:'rgba(42,120,214,0.10)', stat:'#898781', expl:'#eda100',
+       grid:'rgba(105,117,135,0.16)', ink:'#697587', mark:'#c0405a'};
+
+function resize(){
+  var w=cv.parentNode.clientWidth-0;
+  var ratio=window.devicePixelRatio||1;
+  cv.style.height='360px';
+  cv.width=w*ratio; cv.height=360*ratio;
+  ctx.setTransform(ratio,0,0,ratio,0,0);
+}
+window.addEventListener('resize',function(){resize();draw();});
+resize();
+
+function step(){
+  t++; sinceDrift++;
+  expl=Math.max(0.06, expl*0.965);
+  mabVal+=(mabTarget-mabVal)*0.055 + (Math.random()-0.5)*0.03;
+  statVal+=(statTarget-statVal)*0.15 + (Math.random()-0.5)*0.02;
+  mabVal=Math.min(0.95,Math.max(0.02,mabVal));
+  X.push(t); M.push(mabVal); S.push(statVal); E.push(expl);
+  if(X.length>MAX){X.shift();M.shift();S.shift();E.shift();}
+  marks=marks.filter(function(m){return m>=X[0];});
+  draw(); kpis();
+}
+
+function px(i,w,pad){ var n=X.length; return pad.l+(w-pad.l-pad.r)*(n<=1?0:i/(n-1)); }
+function py(v,h,pad){ return pad.t+(h-pad.t-pad.b)*(1-v); }
+
+function line(arr,color,dash,width,h,w,pad){
+  ctx.save(); ctx.strokeStyle=color; ctx.lineWidth=width; ctx.lineJoin='round'; ctx.lineCap='round';
+  if(dash) ctx.setLineDash(dash);
+  ctx.beginPath();
+  for(var i=0;i<arr.length;i++){ var x=px(i,w,pad), y=py(arr[i],h,pad); i?ctx.lineTo(x,y):ctx.moveTo(x,y); }
+  ctx.stroke(); ctx.restore();
+}
+
+function draw(){
+  var w=cv.clientWidth, h=360, pad={l:46,r:14,t:14,b:34};
+  ctx.clearRect(0,0,w,h);
+  ctx.font='11px system-ui,sans-serif'; ctx.fillStyle=C.ink;
+  for(var g=0;g<=4;g++){
+    var v=g/4, y=py(v,h,pad);
+    ctx.strokeStyle=C.grid; ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(pad.l,y); ctx.lineTo(w-pad.r,y); ctx.stroke();
+    ctx.fillText(v.toFixed(2), 10, y+4);
+  }
+  ctx.fillText('tempo (interações) →', pad.l, h-10);
+  ctx.save(); ctx.translate(12,py(0.5,h,pad)); ctx.rotate(-Math.PI/2);
+  ctx.textAlign='center'; ctx.fillText('recompensa média (0–1)',0,-1); ctx.restore();
+
+  marks.forEach(function(m){
+    var i=X.indexOf(m); if(i<0) return;
+    var x=px(i,w,pad);
+    ctx.save(); ctx.strokeStyle=C.mark; ctx.lineWidth=1.5; ctx.setLineDash([4,4]);
+    ctx.beginPath(); ctx.moveTo(x,pad.t); ctx.lineTo(x,h-pad.b); ctx.stroke();
+    ctx.setLineDash([]); ctx.fillStyle=C.mark; ctx.font='10px system-ui,sans-serif';
+    ctx.fillText('⚡',x-4,pad.t+12); ctx.restore();
+  });
+
+  if(M.length>1){
+    ctx.save(); ctx.fillStyle=C.mabFill; ctx.beginPath();
+    ctx.moveTo(px(0,w,pad),py(M[0],h,pad));
+    for(var i=1;i<M.length;i++) ctx.lineTo(px(i,w,pad),py(M[i],h,pad));
+    ctx.lineTo(px(M.length-1,w,pad),py(0,h,pad)); ctx.lineTo(px(0,w,pad),py(0,h,pad));
+    ctx.closePath(); ctx.fill(); ctx.restore();
+  }
+  line(E,C.expl,[2,4],2,h,w,pad);
+  line(S,C.stat,[6,4],2,h,w,pad);
+  line(M,C.mab,null,2.5,h,w,pad);
+}
+
+function kpis(){
+  document.getElementById('kpiMab').textContent=mabVal.toFixed(2);
+  document.getElementById('kpiStatic').textContent=statVal.toFixed(2);
+  document.getElementById('kpiDrifts').textContent=drifts;
+  var el=document.getElementById('kpiState');
+  if(sinceDrift<18){ el.textContent='readaptando…'; el.style.color='#c07d12'; }
+  else if(Math.abs(mabTarget-mabVal)<0.08){ el.textContent='convergido'; el.style.color='#3f7d2e'; }
+  else { el.textContent='aprendendo'; el.style.color='#0f2743'; }
+}
+
+setInterval(function(){ if(running) step(); },110);
+
+document.getElementById('btnDrift').addEventListener('click',function(){
+  drifts++; sinceDrift=0;
+  marks.push(t+1);
+  mabVal=Math.max(0.15,mabVal-0.32-Math.random()*0.08);
+  expl=Math.min(1,expl+0.55);
+  statTarget=Math.max(0.18,statTarget-0.16-Math.random()*0.06);
+  statVal=statTarget+0.05;
+  mabTarget=0.70+Math.random()*0.08;
+});
+document.getElementById('btnPause').addEventListener('click',function(){
+  running=!running;
+  this.textContent=running?'⏸ Pausar':'▶ Continuar';
+});
+document.getElementById('btnReset').addEventListener('click',function(){
+  t=0;mabVal=0.12;mabTarget=0.75;statVal=0.68;statTarget=0.68;expl=1;sinceDrift=999;drifts=0;
+  X.length=0;M.length=0;S.length=0;E.length=0;marks.length=0;
+  draw();kpis();
+});
+draw();
+})();
+</script>
+</body>
+</html>
